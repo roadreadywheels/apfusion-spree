@@ -1,13 +1,24 @@
 module SpreeApfusion
-  class OAuth
+	class OAuth
 		
-  	def self.init
+		def self.init
 			# @url = 'https://www.apfusion_auth.com'
 			@url = 'http://localhost:3000'
 			@grant_type = 'client_credentials'
 			
-			# @apfusion_auth_config = YAML.load_file(Rails.root.to_s + '/config/apfusion_auth_config.yml')[Rails.env]
-			@apfusion_auth_config = YAML.load_file('/Users/afzal/rails/gems/spree_apfusion/config/apfusion_auth_config.yml')[Rails.env]
+			begin
+				@apfusion_auth_config = YAML.load_file(Rails.root.to_s + '/config/apfusion_auth_config.yml')[Rails.env]
+			rescue
+				raise "
+				\n===============================================================
+				\n Please create a config file at /config/apfusion_auth_config.yml like the example given below
+				\n===============================================================
+				\ndevelopment:
+				\n\tpublic_key: PUBLIC_KEY
+				\n\tsecret_key: SECRET_KEY
+				\n===============================================================\n"
+			end
+			# @apfusion_auth_config = YAML.load_file('/Users/afzal/rails/gems/spree_apfusion/config/apfusion_auth_config.yml')[Rails.env]
 			@public_key = @apfusion_auth_config['public_key']
 			@secret_key = @apfusion_auth_config['secret_key']
 			@access_token = ApfusionToken.first.try(:token)
@@ -52,40 +63,63 @@ module SpreeApfusion
 			{status: 'Authorized!', access_token: @access_token}
 		end
 
-		def self.send (url_path, data)
-			SpreeApfusion::OAuth.init
-			
-			if @access_token.blank?
-				response = SpreeApfusion::OAuth.get_access_token
-				unless response[:success]
-					return response
-				end
-			end
+		def self.send (method, url_path, data)
+			p '========================'
+			p "Method: #{method}"
+			p "Url: #{url_path}"
+			p "Params: #{data}"
+			p '========================'
+			SpreeApfusion::OAuth.authorize
 
-			begin
-				
-				request = RestClient.post(@url+url_path, data)
-				
-				if request.present?
-					return JSON.parse(request.body)
-				else
-					return {success: false, response: 'Error! Unable to send data.'}
-				end
+			request = RestClient::Request.new(
+				method: method,
+				url: @url+url_path+'?access_token='+@access_token,
+				headers: {params: data}
+			)
 			
-			rescue => e
-				error = e.as_json
-				if error == "401 Unauthorized" || error['initial_response_code'] == 401
+			response = request.execute {|response| $results = response}
+
+			p response
+			
+			case response.code.to_s
+				when /^20/
+					return {success: true, response: JSON.parse(response.body), response_code: response.code}
+				when '401'
+					p '!!!!Invalid Access Token!!!!'
 					ApfusionToken.destroy_all
-					SpreeApfusion::OAuth.push(url_path, data)
+					SpreeApfusion::OAuth.send(method, url_path, data)
 				else
-					if error.is_a? String
-						return {success: false, response: "#{error} - In sending data."}
-					else
-						return {success: false, response: JSON.parse(error['response'].body), response_code: error['initial_response_code']}
-					end
-				end
-			
+					return {success: false, response: JSON.parse(response.body), response_code: response.code}
 			end
+			# p 1
+			# SpreeApfusion::OAuth.authorize
+			# p 2
+			# begin
+			# 	p 3
+			# 	p method
+			# 	request = RestClient.send(method, @url+url_path+'?access_token='+@access_token, data)
+			# 	p request.as_json	
+			# 	if request.present?
+			# 		return JSON.parse(request.body)
+			# 	else
+			# 		return {success: false, response: 'Error! Unable to send data.'}
+			# 	end
+			
+			# rescue => e
+			# 	p 4
+			# 	error = e.as_json
+			# 	if error == "401 Unauthorized" || error['initial_response_code'] == 401
+			# 		ApfusionToken.destroy_all
+			# 		SpreeApfusion::OAuth.send(url_path, data)
+			# 	else
+			# 		if error.is_a? String
+			# 			return {success: false, response: "#{error} - In sending data."}
+			# 		else
+			# 			return {success: false, response: JSON.parse(error['response'].body), response_code: error['initial_response_code']}
+			# 		end
+			# 	end
+			
+			# end
 		end
 
 	end
