@@ -1,5 +1,5 @@
 Spree::Product.class_eval do
-		after_save :sync_apfusion
+		after_create :sync_apfusion
 
 		def sync_apfusion
 			p 'SYNC APFUSION'
