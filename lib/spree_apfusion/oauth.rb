@@ -78,11 +78,10 @@ module SpreeApfusion
 			)
 			
 			response = request.execute {|response| $results = response}
-			p "====I AM RESPONSE=========="
-			p response.body
+
+			response.body
 
 			begin
-				p 1111111
 				response_body = JSON.parse(response.body)
 			rescue 				
 				response_body = ''

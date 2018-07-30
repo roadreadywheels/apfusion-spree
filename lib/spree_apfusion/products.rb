@@ -16,6 +16,7 @@ module SpreeApfusion
   	# end
 
     def self.generate_product_hash 
+      
       SpreeApfusion::Product.add_product_price
     end
 
