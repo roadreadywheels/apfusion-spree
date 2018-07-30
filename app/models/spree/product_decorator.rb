@@ -1,6 +1,5 @@
 Spree::Product.class_eval do
 		after_create :sync_apfusion
-
 		def sync_apfusion
 			p 'SYNC APFUSION'
 			p '.'*50

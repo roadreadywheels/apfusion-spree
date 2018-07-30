@@ -7,7 +7,7 @@ module SpreeApfusion
   		# p "===#{product}==productCALL==="
   		# p "========#{SpreeApfusion::Product.sanitize_params(product)}=============sanitizeparams=========="
       SpreeApfusion::Product.generate_product_hash 
-  		SpreeApfusion::OAuth.send(:post, '/api/v1/products.json', {product: @product_hash})
+  		SpreeApfusion::OAuth.send(:post, '/api/v2/products.json', {product: @product_hash})
   	end
 
   	# def self.sanitize_params product

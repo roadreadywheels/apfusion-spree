@@ -78,18 +78,27 @@ module SpreeApfusion
 			)
 			
 			response = request.execute {|response| $results = response}
+			p "====I AM RESPONSE=========="
+			p response.body
 
-			p response
-			
+			begin
+				p 1111111
+				response_body = JSON.parse(response.body)
+			rescue 				
+				response_body = ''
+			end
+
 			case response.code.to_s
+
 				when /^20/
-					return {success: true, response: JSON.parse(response.body), response_code: response.code}
+					p '123'
+					return {success: true, response: response_body, response_code: response.code}
 				when '401'
 					p '!!!!Invalid Access Token!!!!'
 					ApfusionToken.destroy_all
 					SpreeApfusion::OAuth.send(method, url_path, data)
 				else
-					return {success: false, response: JSON.parse(response.body), response_code: response.code}
+					return {success: false, response: response_body, response_code: response.code}
 			end
 			# p 1
 			# SpreeApfusion::OAuth.authorize
