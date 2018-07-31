@@ -4,19 +4,21 @@ module SpreeApfusion
   	def self.create product
       @product = product
       @product_hash 
-  		# p "===#{product}==productCALL==="
-  		# p "========#{SpreeApfusion::Product.sanitize_params(product)}=============sanitizeparams=========="
       SpreeApfusion::Product.generate_product_hash 
   		SpreeApfusion::OAuth.send(:post, '/api/v2/products.json', {product: @product_hash})
   	end
 
-  	# def self.sanitize_params product
-  	# 	p "==========#{product}==sanitizeFunction===="
-  	# 	product.except(:name,:price, :shipping_category)
-  	# end
+
+    def self.update product
+      @product = product
+
+      p "========UPDate call Values====="
+      p @product.id
+      SpreeApfusion::Product.generate_product_hash 
+      SpreeApfusion::OAuth.send(:PUT, '/api/v2/products/'+@product.id.to_s+'.json', {product: @product_hash}) 
+    end  
 
     def self.generate_product_hash 
-      
       SpreeApfusion::Product.add_product_price
     end
 
@@ -31,6 +33,3 @@ module SpreeApfusion
 
 	end
 end
-
-
-# SpreeApfusion::OAuth.send(:post, '/api/v1/products.json', {product: {name:'test product', price: 12,shipping_category: 'default'}})
