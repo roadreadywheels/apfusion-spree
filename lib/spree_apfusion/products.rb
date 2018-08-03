@@ -19,16 +19,26 @@ module SpreeApfusion
     end  
 
     def self.generate_product_hash 
+      @product_hash = @product.attributes
       SpreeApfusion::Product.add_product_price
+      SpreeApfusion::Product.add_option_type_id
+
+
     end
 
 
     def self.add_product_price 
-      p "++++++++++++++++#{@product}++++++++++++++++++"
-      p "-----------------#{@product.price}-----"
-      @product_hash = @product.attributes
       @product_hash["price"] = @product.price
 
+    end
+
+    def self.add_option_type_id
+      p"======OptionType CALLED=="
+      @product_hash["option_type_ids"] = @product.option_types.collect(&:id)
+
+      p @product.option_types.collect(&:id)
+
+      
     end
 
 	end

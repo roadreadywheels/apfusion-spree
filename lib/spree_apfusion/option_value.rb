@@ -22,7 +22,8 @@ module SpreeApfusion
       @option_value = option_value
       p "========Delete call====="
       p @option_value.id
-      SpreeApfusion::OAuth.send(:DELETE , '/api/v2/option_values/'+@option_value.id.to_s+'.json', {})
+      SpreeApfusion::OptionValue.generate_option_value_hash 
+      SpreeApfusion::OAuth.send(:DELETE , '/api/v2/option_values/'+@option_value.id.to_s+'.json', {option_value: @option_value_hash})
     end
 
 

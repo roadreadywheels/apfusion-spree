@@ -1,8 +1,8 @@
 Spree::OptionType.class_eval do
-		after_create :create_option_type
-		after_update :update_option_type
-		after_destroy :destroy_option_type
-		def create_option_type
+		after_create :create_at_apfusion
+		after_update :update_at_apfusion
+		after_destroy :destroy_at_apfusion
+		def create_at_apfusion
 			p 'SYNC APFUSION'
 			p '.'*50
 			p self.as_json
@@ -11,7 +11,7 @@ Spree::OptionType.class_eval do
 			p '.'*50
 		end
 
-		def update_option_type
+		def update_at_apfusion
 			p 'UPDate APFUSION'
 			p '.'*50
 			p self.as_json
@@ -20,7 +20,7 @@ Spree::OptionType.class_eval do
 			p '.'*50
 		end
 
-		def destroy_option_type
+		def destroy_at_apfusion
 			p 'SYNC APFUSION'
 			p '.'*50
 			p self.as_json

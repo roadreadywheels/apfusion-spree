@@ -1,8 +1,8 @@
 Spree::Product.class_eval do
-		after_create :create_product
-		after_update :update_product
-		
-		def create_product
+		after_create :create_at_apfusion
+		after_update :update_at_apfusion
+
+		def create_at_apfusion
 			p 'SYNC APFUSION'
 			p '.'*50
 			p self.as_json
@@ -11,7 +11,7 @@ Spree::Product.class_eval do
 			p '.'*50
 		end
 
-		def update_product
+		def update_at_apfusion
 			p 'SYNC APFUSION'
 			p '.'*50
 			p self.as_json
