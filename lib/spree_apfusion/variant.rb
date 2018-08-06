@@ -33,9 +33,14 @@ module SpreeApfusion
       @variant_hash["option_value_ids"] = @variant.option_value_ids
     end
 
+    def self.add_product_price
+       @variant_hash["price"] = @variant.price
+    end
+
     def self.generate_variant_hash 
       @variant_hash = @variant.attributes
       SpreeApfusion::Variant.add_option_value_ids
+      SpreeApfusion::Variant.add_product_price
     end
 
   end
