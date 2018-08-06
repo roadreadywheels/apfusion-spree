@@ -18,6 +18,15 @@ module SpreeApfusion
       SpreeApfusion::OAuth.send(:PUT, '/api/v2/products/'+@product.id.to_s+'.json', {product: @product_hash}) 
     end  
 
+    def self.destroy product
+      @product = product
+
+      p "========UPDate call Values====="
+      p @product.id
+      SpreeApfusion::Product.generate_product_hash 
+      SpreeApfusion::OAuth.send(:DELETE, '/api/v2/products/'+@product.id.to_s+'.json', {product: @product_hash}) 
+    end  
+
     def self.generate_product_hash 
       @product_hash = @product.attributes
       SpreeApfusion::Product.add_product_price
