@@ -2,6 +2,8 @@ module SpreeApfusion
   class Product
 
   	def self.create product
+
+      p "=====PRODUCT CREATE CALLED====="
       @product = product
       @product_hash 
       SpreeApfusion::Product.generate_product_hash 
@@ -31,6 +33,7 @@ module SpreeApfusion
       @product_hash = @product.attributes
       SpreeApfusion::Product.add_product_price
       SpreeApfusion::Product.add_option_type_id
+      SpreeApfusion::Product.add_sku
 
 
     end
@@ -46,8 +49,10 @@ module SpreeApfusion
       @product_hash["option_type_ids"] = @product.option_types.collect(&:id)
 
       p @product.option_types.collect(&:id)
+    end
 
-      
+    def self.add_sku
+      @product_hash["sku"] = @product.sku
     end
 
 	end

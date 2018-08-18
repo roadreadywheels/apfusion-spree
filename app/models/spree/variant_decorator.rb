@@ -3,10 +3,10 @@ Spree::Variant.class_eval do
 	after_update :update_at_apfusion
 	after_destroy :destroy_at_apfusion
 	def create_at_apfusion
-		p 'SYNC APFUSION'
+		p 'SYNC APFUSION variant '
 		p '.'*50
 		p self.as_json
-		p SpreeApfusion::Variant.create(self)
+		 	SpreeApfusion::Variant.create(self)
 		# p SpreeApfusion::Image.create()
 		p '.'*50
 	end

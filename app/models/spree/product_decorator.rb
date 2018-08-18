@@ -5,8 +5,9 @@ Spree::Product.class_eval do
 		def create_at_apfusion
 			p 'SYNC APFUSION'
 			p '.'*50
+			p "+++++++++AFTER product create++++++++++"
 			p self.as_json
-			p SpreeApfusion::Product.create(self)
+			SpreeApfusion::Product.create(self)
 			# p SpreeApfusion::Image.create()
 			p '.'*50
 		end
