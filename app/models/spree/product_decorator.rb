@@ -30,4 +30,18 @@ Spree::Product.class_eval do
 			p '.'*50
 		end
 
+
+
+		def self.create_all_products
+			p "=======ALL OptionType CALLED================="
+			p a = Spree::Product.all
+			p "++++++++++++++++++++++++++++++==="
+			Spree::Product.all.each do |product|
+				p "============Each called="
+				p product
+				SpreeApfusion::Product.create(product)
+			end 
+		end
+
+
 	end

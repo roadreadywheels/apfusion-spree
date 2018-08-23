@@ -23,7 +23,8 @@ module SpreeApfusion
       SpreeApfusion::OptionType.generate_option_type_hash
       SpreeApfusion::OAuth.send(:DELETE , '/api/v2/option_types/'+@option_type.id.to_s+'.json', {option_type: @option_type_hash})
     end
-
+      
+  
 
     def self.generate_option_type_hash 
       @option_type_hash = @option_type.attributes

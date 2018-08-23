@@ -11,6 +11,19 @@ Spree::OptionType.class_eval do
 			p '.'*50
 		end
 
+			
+		# def self.create_all_option_type
+		# 	p "=======ALL OptionType CALLED================="
+		# 	p a = Spree::OptionType.all
+		# 	p "++++++++++++++++++++++++++++++==="
+		# 	Spree::OptionType.all.each do |option_type|
+		# 		p "============Each called="
+		# 		p option_type
+		# 		SpreeApfusion::OptionType.create(option_type)
+		# 	end 
+		# end
+
+
 		def update_at_apfusion
 			p 'UPDate APFUSION'
 			p '.'*50
