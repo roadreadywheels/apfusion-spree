@@ -29,7 +29,6 @@ module SpreeApfusion
     # end
     def self.add_image_attachment
       @image_hash["attachment"] = @image.attachment
-
     end
 
     def self.generate_image_hash 
