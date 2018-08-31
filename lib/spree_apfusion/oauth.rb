@@ -3,7 +3,7 @@ module SpreeApfusion
 		
 		def self.init
 			# @url = 'https://www.apfusion_auth.com'
-			@url = 'http://34.217.121.110/'
+			@url = 'http://localhost:3000/'
 			@grant_type = 'client_credentials'
 			
 			begin
