@@ -6,7 +6,7 @@ module SpreeApfusion
       @stock_item_hash 
 
       p "======VARIANT CREATE CALL======"
-      p @stock_item.product_id
+      p @stock_item.stock_location_id
       SpreeApfusion::StockItem.generate_stock_item_hash 
       SpreeApfusion::OAuth.send(:post, '/api/v2/stock_locations/'+@stock_item.stock_location_id.to_s+'/stock_items.json', {stock_item: @stock_item_hash})
     end
@@ -17,7 +17,7 @@ module SpreeApfusion
       p "========UPDate call Values====="
       p @stock_item.id
       SpreeApfusion::StockItem.generate_stock_item_hash 
-      SpreeApfusion::OAuth.send(:PUT, '/api/v2/products/'+@stock_item.product_id.to_s+'/stock_items/'+@stock_item.id.to_s+'.json', {stock_item: @stock_item_hash})
+      SpreeApfusion::OAuth.send(:PUT, '/api/v2/stock_locations/'+@stock_item.stock_location_id.to_s+'/stock_items/'+@stock_item.id.to_s+'.json', {stock_item: @stock_item_hash})
     end
 
 

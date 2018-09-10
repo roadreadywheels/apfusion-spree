@@ -1,22 +1,21 @@
-Spree::StockItem.class_eval do
+Spree::StockMovement.class_eval do
 	 after_create :create_at_apfusion
-	 after_update :update_at_apfusion
+	 # after_update :update_at_apfusion
 	# after_destroy :destroy_at_apfusion
 	def create_at_apfusion
-		p 'SYNC APFUSION after create 	stock item create called '
+		p 'SYNC APFUSION variant  cReate movement calleds'
 		p '.'*50
 		p self.as_json
-		 	SpreeApfusion::StockItem.create(self)
+		 	SpreeApfusion::StockMovement.create(self)
 		# p SpreeApfusion::Image.create()
 		p '.'*50
 	end
 
 	def update_at_apfusion
-			p 'UPDate StockItem sotck item  update clald'
+			p 'UPDate StockMovement'
 			p '.'*50
 			p self.as_json
-
-			SpreeApfusion::StockItem.update(self)
+			# p SpreeApfusion::StockMovement.update(self)
 			# p SpreeApfusion::Image.create()
 			p '.'*50
 	end
@@ -25,7 +24,7 @@ Spree::StockItem.class_eval do
 			p 'SYNC APFUSION'
 			p '.'*50
 			p self.as_json
-			p SpreeApfusion::StockItem.destroy(self)
+			p SpreeApfusion::StockMovement.destroy(self)
 			# p SpreeApfusion::Image.create()
 			p '.'*50
 	end
