@@ -5,7 +5,7 @@ module SpreeApfusion
       @stock_item = stock_item
       @stock_item_hash 
 
-      p "======VARIANT CREATE CALL======"
+      p "======StockItem Create CALLED============="*2
       p @stock_item.stock_location_id
       SpreeApfusion::StockItem.generate_stock_item_hash 
       SpreeApfusion::OAuth.send(:post, '/api/v2/stock_locations/'+@stock_item.stock_location_id.to_s+'/stock_items.json', {stock_item: @stock_item_hash})
