@@ -26,7 +26,7 @@ module SpreeApfusion
       p "========Delete call====="
       p @stock_item.id
       SpreeApfusion::StockItem.generate_stock_item_hash 
-      SpreeApfusion::OAuth.send(:DELETE , '/api/v2/products/'+@stock_item.product_id.to_s+'/stock_items/'+@stock_item.id.to_s+'.json', {stock_item: @stock_item_hash})
+      SpreeApfusion::OAuth.send(:DELETE ,'/api/v2/stock_locations/'+@stock_item.stock_location_id.to_s+'/stock_items/'+@stock_item.id.to_s+'.json', {stock_item: @stock_item_hash})
     end
 
 
