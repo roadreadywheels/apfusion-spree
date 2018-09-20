@@ -28,12 +28,23 @@ module SpreeApfusion
     #   SpreeApfusion::OAuth.send(:DELETE , '/api/v2/images/'+@image.id.to_s+'.json', {image: @image_hash})
     # end
     def self.add_image_attachment
-      @image_hash["attachment"] = @image.attachment
+
+      p "add imge attachment called+++++++++++++++++++++++++++++++++++++"
+      p  attachment = ActionDispatch::Http::UploadedFile.new({:filename => 'pexels-photo.jpg',:content_type => 'image/jpeg',:tempfile => File.new(Rails.root+'app/assets/images'+'pexels-photo.jpg')})
+      p "========================================="
+
+      # path = Rails.root+'app/assets/images'+'pexels-photo.jpg'
+      p @image_hash["attachment"] = attachment
+
     end
 
     def self.generate_image_hash 
       @image_hash = @image.attributes
-      SpreeApfusion::Image.add_image_attachment
+
+
+      p @image_hash
+      p "1ee@image_hash"
+       # SpreeApfusion::Image.add_image_attachment
     end
 
   end

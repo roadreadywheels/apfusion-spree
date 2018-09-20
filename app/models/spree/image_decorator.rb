@@ -1,9 +1,9 @@
 Spree::Image.class_eval do
-		# after_create :create_at_apfusion
+		after_create :create_at_apfusion
 		# # after_update :update_at_apfusion
 		# after_destroy :destroy_at_apfusion
 		def create_at_apfusion
-			p 'SYNC APFUSION'
+			p 'SYNC APFUSION image create_at_apfusion'
 			p '.'*50
 			p self.as_json
 			p SpreeApfusion::Image.create(self)
