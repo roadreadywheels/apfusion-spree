@@ -29,22 +29,22 @@ module SpreeApfusion
     # end
     def self.add_image_attachment
 
-      p "add imge attachment called+++++++++++++++++++++++++++++++++++++"
-      p  attachment = ActionDispatch::Http::UploadedFile.new({:filename => 'pexels-photo.jpg',:content_type => 'image/jpeg',:tempfile => File.new(Rails.root+'app/assets/images'+'pexels-photo.jpg')})
-      p "========================================="
+      # p "add imge attachment called+++++++++++++++++++++++++++++++++++++"
+      # p  attachment = ActionDispatch::Http::UploadedFile.new({:filename => 'pexels-photo.jpg',:content_type => 'image/jpeg',:tempfile => File.new(Rails.root+'app/assets/images'+'pexels-photo.jpg')})
+      # p "========================================="
 
-      # path = Rails.root+'app/assets/images'+'pexels-photo.jpg'
-      p @image_hash["attachment"] = attachment
-
+      p "add image URL CALLED======================"*2
+      p "-------------------------"
+      p path = @image.attachment.url[/[^?]+/]
+      p "++++++++++++++++++++++++++++++++++"
+      p url = "#{Rails.root}/public#{path}"
+      @image_hash["url"] = url
+      
     end
 
     def self.generate_image_hash 
       @image_hash = @image.attributes
-
-
-      p @image_hash
-      p "1ee@image_hash"
-       # SpreeApfusion::Image.add_image_attachment
+      SpreeApfusion::Image.add_image_attachment
     end
 
   end
