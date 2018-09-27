@@ -10,30 +10,30 @@ module SpreeApfusion
       SpreeApfusion::OAuth.send(:post, '/api/v2/products/'+@image.viewable.product.id.to_s+'/images.json', {image: @image_hash})
     end
 
-    # def self.update image
-    #   @image = image
+    def self.update image
+      @image = image
 
-    #   p "========UPDate call Values====="
-    #   p @image.id
-    #   SpreeApfusion::Image.generate_image_hash 
-    #   SpreeApfusion::OAuth.send(:PUT, '/api/v2/images/'+@image.id.to_s+'.json', {image: @image_hash})
-    # end
+      p "========UPDate call Values====="
+      p @image.id
+      SpreeApfusion::Image.generate_image_hash 
+      SpreeApfusion::OAuth.send(:PUT, '/api/v2/products/'+@image.viewable.product.id.to_s+'/images/'+@image.id.to_s+'.json', {image: @image_hash})
+    end
 
 
-    # def self.destroy image
-    #   @image = image
-    #   p "========Delete call====="
-    #   p @image.id
-    #   SpreeApfusion::Image.generate_image_hash 
-    #   SpreeApfusion::OAuth.send(:DELETE , '/api/v2/images/'+@image.id.to_s+'.json', {image: @image_hash})
-    # end
+    def self.destroy image
+      @image = image
+      p "========Delete call====="
+      p @image.id
+      SpreeApfusion::Image.generate_image_hash 
+      SpreeApfusion::OAuth.send(:DELETE ,'/api/v2/products/'+@image.viewable.product.id.to_s+'/images/'+@image.id.to_s+'.json', {image: @image_hash})
+    end
+    
+
+
     def self.add_image_attachment
 
-      # p "add imge attachment called+++++++++++++++++++++++++++++++++++++"
-      # p  attachment = ActionDispatch::Http::UploadedFile.new({:filename => 'pexels-photo.jpg',:content_type => 'image/jpeg',:tempfile => File.new(Rails.root+'app/assets/images'+'pexels-photo.jpg')})
-      # p "========================================="
-
       p "add image URL CALLED======================"*2
+      p @image.attachment.url
       p "-------------------------"
       p path = @image.attachment.url[/[^?]+/]
       p "++++++++++++++++++++++++++++++++++"
@@ -42,9 +42,18 @@ module SpreeApfusion
       
     end
 
+    def self.check_variant_is_master 
+      is_master = @image.viewable.is_master 
+      if is_master == true
+        @image_hash["is_master"] = is_master
+      end  
+    end
+
+
     def self.generate_image_hash 
       @image_hash = @image.attributes
       SpreeApfusion::Image.add_image_attachment
+      SpreeApfusion::Image.check_variant_is_master
     end
 
   end

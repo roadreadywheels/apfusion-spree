@@ -1,7 +1,8 @@
 Spree::Image.class_eval do
-		after_commit :create_at_apfusion
-		# # after_update :update_at_apfusion
-		# after_destroy :destroy_at_apfusion
+		after_commit ->(obj) {obj.create_at_apfusion}, on: :create
+		after_commit ->(obj) {obj.update_at_apfusion}, on: :update
+		after_destroy :destroy_at_apfusion
+		
 		def create_at_apfusion
 			p 'SYNC APFUSION image create_at_apfusion'
 			p '.'*50
