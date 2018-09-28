@@ -50,10 +50,18 @@ module SpreeApfusion
     end
 
 
+    def self.add_variant_id
+
+      @image_hash["variant_id"] = @image.viewable.id
+      
+    end
+
+
     def self.generate_image_hash 
       @image_hash = @image.attributes
       SpreeApfusion::Image.add_image_attachment
       SpreeApfusion::Image.check_variant_is_master
+      SpreeApfusion::Image.add_variant_id
     end
 
   end
