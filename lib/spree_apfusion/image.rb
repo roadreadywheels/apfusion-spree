@@ -31,14 +31,20 @@ module SpreeApfusion
 
 
     def self.add_image_attachment
-
+      url_type = @image.attachment.url
       p "add image URL CALLED======================"*2
-      p @image.attachment.url
-      p "-------------------------"
-      p path = @image.attachment.url[/[^?]+/]
-      p "++++++++++++++++++++++++++++++++++"
-      p url = "#{Rails.root}/public#{path}"
-      @image_hash["url"] = url
+      if url_type.include?('amazonaws.com')
+        p "if called =================="*2
+        url = url_type
+        @image_hash["url"] = url
+      else
+        p "ELSE CALLED URL ============"*2
+        p "-------------------------"
+        p path = @image.attachment.url[/[^?]+/]
+        p "++++++++++++++++++++++++++++++++++"
+        p url = "#{Rails.root}/public#{path}"
+        @image_hash["url"] = url
+      end  
       
     end
 
