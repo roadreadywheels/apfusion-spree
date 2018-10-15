@@ -14,21 +14,21 @@ Spree::Order.class_eval do
 		 	bill_address = order["bill_address_attributes"]
 		 	ship_address = order["ship_address_attributes"]
 		 	orders_attributes = {'bill_address_attributes'=>bill_address,'ship_address_attributes'=>ship_address}
-			# order["line_items"].each do |line_item|
-			# 	p "line_item"*10
-			# 	p line_item["product_id"]	
-			# 	if line_item["product_id"].present?
-			# 		variant = Spree::Product.find(line_item["product_id"]).master
-			# 	else
-			# 		variant = Spree::Variant.find(line_item["source_id"]).master
-			# 	end	
-			# 	begin
-			# 	 quantity = line_item["quantity"]
-			# 		@order =  @order.contents.add(variant,quantity)
-			# 	rescue ActiveRecord::ReproductscordInvalid => e
-			# 		error = e.record.errors.full_messages.join(', ')
-			# 	end
-			# end	
+			order["line_items"].each do |line_item|
+				p "line_item"*10
+				p line_item["product_id"]	
+				if line_item["product_id"].present?
+					variant = Spree::Product.find(line_item["product_id"]).master
+				else
+					variant = Spree::Variant.find(line_item["source_id"]).master
+				end	
+				begin
+				 quantity = line_item["quantity"]
+					@order =  @order.contents.add(variant,quantity)
+				rescue ActiveRecord::ReproductscordInvalid => e
+					error = e.record.errors.full_messages.join(', ')
+				end
+			end	
 			p "======="*20
 			p orders_attributes
 			p "++++++"*20
