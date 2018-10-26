@@ -5,8 +5,9 @@ Spree::Product.class_eval do
 		def create_at_apfusion
 			p 'SYNC APFUSION'
 			p '.'*50
+			p "+++++++++AFTER product create++++++++++"
 			p self.as_json
-			p SpreeApfusion::Product.create(self)
+			SpreeApfusion::Product.create(self)
 			# p SpreeApfusion::Image.create()
 			p '.'*50
 		end
@@ -27,6 +28,20 @@ Spree::Product.class_eval do
 			p SpreeApfusion::Product.destroy(self)
 			# p SpreeApfusion::Image.create()
 			p '.'*50
-	end
+		end
+
+
+
+		def self.create_all_products
+			p "=======ALL OptionType CALLED================="
+			p a = Spree::Product.all
+			p "++++++++++++++++++++++++++++++==="
+			Spree::Product.all.each do |product|
+				p "============Each called="
+				p product
+				SpreeApfusion::Product.create(product)
+			end 
+		end
+
 
 	end

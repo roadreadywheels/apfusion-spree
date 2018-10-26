@@ -7,4 +7,4 @@ require 'app/models/apfusion_token.rb'
 # require 'app/models/spree/product_decorator.rb'
 
 require "spree_apfusion/oauth"
-require "spree_apfusion/products"
+require "spree_apfusion/product"
