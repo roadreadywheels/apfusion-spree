@@ -1,12 +1,12 @@
 module SpreeApfusion
 	class OAuth
-		
+
 		def self.init
 			# @url = 'https://www.apfusion_auth.com'
-			 	  @url = 'http://localhost:3000/'
-			   # @url = 'http://34.217.121.110/'
+			 	  # @url = 'http://localhost:3000/'
+			   @url = 'http://34.217.121.110/'
 			@grant_type = 'client_credentials'
-			
+
 			begin
 				@apfusion_auth_config = YAML.load_file(Rails.root.to_s + '/config/apfusion_auth_config.yml')[Rails.env]
 			rescue
@@ -26,14 +26,14 @@ module SpreeApfusion
 		end
 
 		def self.get_access_token
-			begin	
+			begin
 				request = RestClient.post(@url+'/oauth/token', {client_id: @public_key, client_secret: @secret_key, grant_type: @grant_type})
 				@access_token = JSON.parse(request.body)['access_token']
-				
+
 				SpreeApfusion::OAuth.update_token
-				
+
 				return {success: true}
-			
+
 			rescue => e
 				error = e.as_json
 				if error.is_a? String
@@ -77,14 +77,14 @@ module SpreeApfusion
 				url: @url+url_path+'?access_token='+@access_token,
 				headers: {params: data}
 			)
-			
+
 			response = request.execute {|response| $results = response}
 
 			response.body
 
 			begin
 				response_body = JSON.parse(response.body)
-			rescue 				
+			rescue
 				response_body = ''
 			end
 
@@ -107,13 +107,13 @@ module SpreeApfusion
 			# 	p 3
 			# 	p method
 			# 	request = RestClient.send(method, @url+url_path+'?access_token='+@access_token, data)
-			# 	p request.as_json	
+			# 	p request.as_json
 			# 	if request.present?
 			# 		return JSON.parse(request.body)
 			# 	else
 			# 		return {success: false, response: 'Error! Unable to send data.'}
 			# 	end
-			
+
 			# rescue => e
 			# 	p 4
 			# 	error = e.as_json
@@ -127,7 +127,7 @@ module SpreeApfusion
 			# 			return {success: false, response: JSON.parse(error['response'].body), response_code: error['initial_response_code']}
 			# 		end
 			# 	end
-			
+
 			# end
 		end
 
