@@ -11,6 +11,8 @@ Spree::Order.class_eval do
 			 	p order['id']
 			 	p "_______"*20
 			 	p order["line_items"]
+			 	p "********"*20
+			 	p order["shipments"]
 			 	order_ids = Spree::Order.all.collect(&:apfusion_order_id)
 			 	unless order_ids.include?(order['id'])
 				 	@order = Spree::Order.new
@@ -40,6 +42,22 @@ Spree::Order.class_eval do
 					@order.update_attributes(orders_attributes)
 					@order.next
 					@order.next
+
+					order["shipments"].each do |shipment|
+						p "shipment=="*20
+						p shipment
+						p "&&&&&&&&&&&"*20
+						shipping_method_name = shipment["shipping_method"]["linked_from"]
+						if shipping_method_name.present?
+							p @shipping_method_id =  Spree::ShippingMethod.find_by_name(shipping_method_name)
+							@order.shipments.each do |shipment| 
+								shipment.shipping_rates.update_all(selected: false)
+								Spree::ShippingRate.find_by_shipping_method_id(@shipping_method_id).update_attributes(selected: true)
+							end	
+							@order.update_totals
+			        @order.persist_totals
+			      end  
+					end	
 					check_payment_method = Spree::PaymentMethod.where(name: "Create at Apfusion").last
 					if check_payment_method.present?
 						payment_method = 	check_payment_method
