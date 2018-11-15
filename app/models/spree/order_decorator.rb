@@ -56,9 +56,8 @@ Spree::Order.class_eval do
 					@order.payments.create(amount: @order.total, payment_method_id: payment_method.id)
 					@order.next
 					@order.next
-				
 				rescue Exception => e
-			 			p e.full_messages
+			 			p e.message
 			 	end	
 			end 	
 		end
