@@ -6,7 +6,7 @@ Spree::Order.class_eval do
 		 	order_ids = Spree::Order.all.collect(&:apfusion_order_id)
 		 	unless order_ids.include?(order['id'])
 		 		begin
-				 	@order = Spree::Order.new
+		 			@order = Spree::Order.new
 				 	order["bill_address_attributes"].delete('id')
 				 	order["ship_address_attributes"].delete('id')
 				 	bill_address = order["bill_address_attributes"]
@@ -32,19 +32,24 @@ Spree::Order.class_eval do
 					@order.next
 
 					order["line_items"].each do |line_item|
-						p "shipment=="*20
+						p "line_item"*20
 						p line_item
-						p "&&&&&&&&&&&"*20
+						p "===="*20
 						p shipping_method_name = line_item["shipping_method"]["linked_from"]
+						p line_item["shipping"]
+						p shipping_method_name.present?
 						if shipping_method_name.present?
 							p @shipping_method_id =  Spree::ShippingMethod.find_by_name(shipping_method_name)
 							@order.shipments.each do |shipment| 
+								shipment.update_attributes(apfusion_shipment_id: line_item["shipping"]["number"] )
 								shipment.shipping_rates.update_all(selected: false)
 								shipment.shipping_rates.find_by_shipping_method_id(@shipping_method_id).update_attributes(selected: true)
 							end	
 							@order.update_totals
 			        @order.persist_totals
-			      end  
+			      else
+			      	@order.shipments.last.update_attributes(apfusion_shipment_id: line_item["shipping"]["number"] )
+				    end  
 					end	
 
 					check_payment_method = Spree::PaymentMethod.where(name: "Create at Apfusion").last
@@ -56,10 +61,10 @@ Spree::Order.class_eval do
 					@order.payments.create(amount: @order.total, payment_method_id: payment_method.id)
 					@order.next
 					@order.next
-				rescue Exception => e
-			 			p e.message
-			 	end	
-			end 	
-		end
+		 		rescue Exception => e
+		 			p e.message
+		 		end
+		 	end	
+		end 	
 	end
 end
