@@ -10,7 +10,7 @@ module SpreeApfusion
       p @shipment.number
       p @shipment.apfusion_shipment_id
       SpreeApfusion::Shipment.generate_shipment_hash 
-      SpreeApfusion::OAuth.send(:PUT, '/api/v2/shipments/'+@shipment.apfusion_shipment_id.to_s+'.json', {shipment: @shipment_hash})
+      SpreeApfusion::OAuth.send(:PUT, '/api/v2/shipments/'+@shipment.apfusion_shipment_id.to_s+'/update_tracking.json', {shipment: @shipment_hash})
     end
   
 

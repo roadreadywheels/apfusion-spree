@@ -3,9 +3,14 @@ Spree::Order.class_eval do
 		p "sync ordre clladed"*5
 		response = SpreeApfusion::Order.get_orders
 		response[:response].each do |order|
-		 	order_ids = Spree::Order.all.collect(&:apfusion_order_id)
+			p "response called"*8
+			p response[:response]
+			p "===="*20
+		 	p order_ids = Spree::Order.all.collect(&:apfusion_order_id)
 		 	unless order_ids.include?(order['id'])
+		 		p "unless called"
 		 		begin
+		 			p "begin called"
 		 			@order = Spree::Order.new
 				 	order["bill_address_attributes"].delete('id')
 				 	order["ship_address_attributes"].delete('id')
@@ -48,6 +53,7 @@ Spree::Order.class_eval do
 							@order.update_totals
 			        @order.persist_totals
 			      else
+			      	p "else callde"*20
 			      	@order.shipments.last.update_attributes(apfusion_shipment_id: line_item["shipping"]["number"] )
 				    end  
 					end	
