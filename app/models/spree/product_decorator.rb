@@ -36,12 +36,14 @@ Spree::Product.class_eval do
 			p "=======ALL OptionType CALLED================="
 			p a = Spree::Product.all
 			p "++++++++++++++++++++++++++++++==="
+			Spree::StockLocation.create_all_stock_locations
 			Spree::Product.all.each do |product|
-				p "============Each called="
-				p product
 				SpreeApfusion::Product.create(product)
+				product.stock_items.each do |stock_item|
+					SpreeApfusion::StockItem.create(stock_item)
+				end	
 			end 
-		end
 
+		end
 
 	end

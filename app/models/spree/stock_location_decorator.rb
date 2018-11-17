@@ -12,16 +12,7 @@ Spree::StockLocation.class_eval do
 		end
 
 			
-		# def self.create_all_option_type
-		# 	p "=======ALL StockLocation CALLED================="
-		# 	p a = Spree::StockLocation.all
-		# 	p "++++++++++++++++++++++++++++++==="
-		# 	Spree::StockLocation.all.each do |option_type|
-		# 		p "============Each called="
-		# 		p option_type
-		# 		SpreeApfusion::StockLocation.create(option_type)
-		# 	end 
-		# end
+	
 
 
 		def update_at_apfusion
@@ -40,6 +31,17 @@ Spree::StockLocation.class_eval do
 			p SpreeApfusion::StockLocation.destroy(self)
 			# p SpreeApfusion::Image.create()
 			p '.'*50
+		end
+
+		def self.create_all_stock_locations
+			p "=======ALL StockLocation CALLED================="
+			p a = Spree::StockLocation.all
+			p "++++++++++++++++++++++++++++++==="
+			Spree::StockLocation.all.each do |stock_location|
+				p "============Each called="
+				p stock_location
+				SpreeApfusion::StockLocation.create(stock_location)
+			end 
 		end
 
 	end

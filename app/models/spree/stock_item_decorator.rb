@@ -21,6 +21,7 @@ Spree::StockItem.class_eval do
 			p '.'*50
 	end
 
+
 	def destroy_at_apfusion
 			p 'SYNC APFUSION'
 			p '.'*50
