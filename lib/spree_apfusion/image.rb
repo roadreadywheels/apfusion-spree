@@ -57,7 +57,6 @@ module SpreeApfusion
 
 
     def self.add_variant_id
-
       @image_hash["variant_id"] = @image.viewable.id
       
     end

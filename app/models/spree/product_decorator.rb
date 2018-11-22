@@ -43,7 +43,9 @@ Spree::Product.class_eval do
 					SpreeApfusion::StockItem.create(stock_item)
 				end	
 			end 
-
+			Spree::Image.create_all_images
 		end
 
 	end
+
+	

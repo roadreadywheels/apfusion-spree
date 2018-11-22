@@ -4,7 +4,7 @@ Spree::Order.class_eval do
 		response = SpreeApfusion::Order.get_orders
 		response[:response].each do |order|
 			p "response called"*8
-			p response[:response]
+			p order
 			p "===="*20
 		 	p order_ids = Spree::Order.all.collect(&:apfusion_order_id)
 		 	unless order_ids.include?(order['id'])
@@ -67,6 +67,18 @@ Spree::Order.class_eval do
 					@order.payments.create(amount: @order.total, payment_method_id: payment_method.id)
 					@order.next
 					@order.next
+					p "after next called"*20
+
+					
+					if ApfusionOrder.last.present?
+						p "if called"*20
+						ApfusionOrder.last.update_attributes(order_id: order['id'])
+					else	
+						p "else calle"
+						ApfusionOrder.create(order_id: order['id'])
+
+					end
+
 		 		rescue Exception => e
 		 			p e.message
 		 		end

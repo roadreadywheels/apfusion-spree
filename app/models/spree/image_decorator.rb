@@ -30,4 +30,11 @@ Spree::Image.class_eval do
 			p '.'*50
 		end
 
+		def self.create_all_images
+			Spree::Image.all.each do |image|
+				SpreeApfusion::Image.create(image)
+			end		
+
+		end
+
 	end
