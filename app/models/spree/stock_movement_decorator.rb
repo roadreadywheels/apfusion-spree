@@ -5,9 +5,9 @@ Spree::StockMovement.class_eval do
 		p 'SYNC APFUSION variant  cReate movement calleds'
 		p '.'*50
 		p self.as_json
-		if self.quantity > 0
+		
 		 	SpreeApfusion::StockMovement.create(self)
-		end 	
+			
 		# p SpreeApfusion::Image.create()
 		p '.'*50
 	end
