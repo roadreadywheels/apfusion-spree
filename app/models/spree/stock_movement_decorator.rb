@@ -8,7 +8,7 @@ Spree::StockMovement.class_eval do
 		
 		 	SpreeApfusion::StockMovement.create(self)
 			
-		# p SpreeApfusion::Image.create()
+
 		p '.'*50
 	end
 
