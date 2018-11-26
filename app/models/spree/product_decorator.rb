@@ -37,10 +37,15 @@ Spree::Product.class_eval do
 			p a = Spree::Product.all
 			p "++++++++++++++++++++++++++++++==="
 			Spree::StockLocation.create_all_stock_locations
+			Spree::Property.create_all_property
 			Spree::Product.all.each do |product|
 				SpreeApfusion::Product.create(product)
 				product.stock_items.each do |stock_item|
 					SpreeApfusion::StockItem.create(stock_item)
+				end
+				product.product_properties do |product_property|
+
+					SpreeApfusion::ProductProperty.create(product_property)
 				end	
 			end 
 			Spree::Image.create_all_images

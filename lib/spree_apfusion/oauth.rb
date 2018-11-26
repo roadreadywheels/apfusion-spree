@@ -2,9 +2,18 @@ module SpreeApfusion
 	class OAuth
 
 		def self.init
-			@url = 'http://apfusion.com/'
-			 	 # @url = 'http://localhost:3000/'
-			   # @url = 'http://34.217.121.110/'
+			# @url = 'http://apfusion.com/'
+			# 
+			urls = {
+				"development" => "http://localhost:3000/",
+				"staging" => "'http://34.217.121.110/",
+				"production" => "http://apfusion.com/"
+			}
+			p "INit ca"
+			p Rails.env
+	 	  p @url = urls[Rails.env]
+	 	   #'http://localhost:3000/'
+	   	# @url = 'http://34.217.121.110/'
 			@grant_type = 'client_credentials'
 
 			begin
@@ -22,7 +31,7 @@ module SpreeApfusion
 			# @apfusion_auth_config = YAML.load_file('/Users/afzal/rails/gems/spree_apfusion/config/apfusion_auth_config.yml')[Rails.env]
 			@public_key = @apfusion_auth_config['public_key']
 			@secret_key = @apfusion_auth_config['secret_key']
-			@access_token = ApfusionToken.first.try(:token)
+			@access_token = ApfusionToken.first.try(:token) || ''
 		end
 
 		def self.get_access_token
@@ -71,7 +80,7 @@ module SpreeApfusion
 			p "Params: #{data}"
 			p '========================'
 			SpreeApfusion::OAuth.authorize
-
+			p "after authorize called"
 			request = RestClient::Request.new(
 				method: method,
 				url: @url+url_path+'?access_token='+@access_token,
@@ -81,7 +90,6 @@ module SpreeApfusion
 			response = request.execute {|response| $results = response}
 
 			response.body
-
 			begin
 				response_body = JSON.parse(response.body)
 			rescue

@@ -12,16 +12,16 @@ Spree::Property.class_eval do
 		end
 
 			
-		# def self.create_all_option_type
-		# 	p "=======ALL Property CALLED================="
-		# 	p a = Spree::Property.all
-		# 	p "++++++++++++++++++++++++++++++==="
-		# 	Spree::Property.all.each do |option_type|
-		# 		p "============Each called="
-		# 		p option_type
-		# 		SpreeApfusion::Property.create(option_type)
-		# 	end 
-		# end
+		def self.create_all_property
+			p "=======ALL Property CALLED================="
+			p a = Spree::Property.all
+			p "++++++++++++++++++++++++++++++==="
+			Spree::Property.all.each do |property|
+				p "============Each called="
+				p property
+				SpreeApfusion::Property.create(property)
+			end 
+		end
 
 
 		def update_at_apfusion
