@@ -43,12 +43,21 @@ Spree::Product.class_eval do
 				product.stock_items.each do |stock_item|
 					SpreeApfusion::StockItem.create(stock_item)
 				end
-				product.product_properties do |product_property|
+				product.product_properties.each do |product_property|
 
 					SpreeApfusion::ProductProperty.create(product_property)
 				end	
 			end 
 			Spree::Image.create_all_images
+		end
+
+		def self.create_product_properties
+			Spree::Property.create_all_property
+			Spree::Product.all.each do |product|
+				product.product_properties.each do |product_property|
+					SpreeApfusion::ProductProperty.create(product_property)
+				end	
+			end	
 		end
 
 	end
