@@ -60,6 +60,12 @@ Spree::Product.class_eval do
 			end	
 		end
 
+		def self.update_product
+			Spree::Product.all.each do |product|
+				SpreeApfusion::Product.update(product)
+			end	
+		end
+
 	end
 
 	

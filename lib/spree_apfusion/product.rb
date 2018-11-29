@@ -42,6 +42,7 @@ module SpreeApfusion
     def self.add_product_price 
       @product_hash["price"] = @product.price
       @product_hash["resale_amount"] = @product.resale_amount
+      @product_hash["bsap_amount"] = @product.bsap_amount
 
     end
 
