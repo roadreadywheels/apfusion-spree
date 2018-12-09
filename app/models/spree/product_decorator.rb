@@ -36,7 +36,7 @@ Spree::Product.class_eval do
 			p "=======ALL OptionType CALLED================="
 			p a = Spree::Product.all
 			p "++++++++++++++++++++++++++++++==="
-			Spree::StockLocation.create_all_stock_locations
+			Spree::StockLocation.create_all_stock_locations	
 			Spree::Property.create_all_property
 			Spree::Product.all.each do |product|
 				SpreeApfusion::Product.create(product)

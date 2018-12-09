@@ -37,6 +37,7 @@ module SpreeApfusion
     def self.generate_stock_item_hash 
       @stock_item_hash = @stock_item.attributes
       SpreeApfusion::StockItem.check_variant_is_master
+      @stock_item_hash["force"] = true
       
      
     end
