@@ -5,8 +5,6 @@ module SpreeApfusion
     def self.update shipment
       begin
         @shipment = shipment
-
-        p "========UPDate call====="
         p @shipment.id
         p @shipment.number
         p @shipment.apfusion_shipment_id

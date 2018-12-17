@@ -9,12 +9,8 @@ module SpreeApfusion
 				"staging" => "http://34.217.121.110/",
 				"production" => "http://apfusion.com/"
 			}
-			p "INit ca"
-			p Rails.env
-	 	  p @url = urls[Rails.env]
-	 	   #'http://localhost:3000/'
-	   	# @url = 'http://34.217.121.110/'
-			@grant_type = 'client_credentials'
+		 	 	@url = urls[Rails.env]
+				@grant_type = 'client_credentials'
 
 			begin
 				@apfusion_auth_config = YAML.load_file(Rails.root.to_s + '/config/apfusion_auth_config.yml')[Rails.env]
@@ -99,7 +95,7 @@ module SpreeApfusion
 			case response.code.to_s
 
 				when /^20/
-					p '123'
+					p 'SYNC Successfully'
 					return {success: true, response: response_body, response_code: response.code}
 				when '401'
 					p '!!!!Invalid Access Token!!!!'

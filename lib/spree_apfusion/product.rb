@@ -2,8 +2,6 @@ module SpreeApfusion
   class Product
 
   	def self.create product
-
-      p "=====PRODUCT CREATE CALLED====="
       @product = product
       @product_hash 
       SpreeApfusion::Product.generate_product_hash 
@@ -13,18 +11,14 @@ module SpreeApfusion
 
     def self.update product
       @product = product
-
-      p "========UPDate call Values====="
-      p @product.id
+      @product.id
       SpreeApfusion::Product.generate_product_hash 
       SpreeApfusion::OAuth.send(:PUT, '/api/v2/products/'+@product.id.to_s+'.json', {product: @product_hash}) 
     end  
 
     def self.destroy product
       @product = product
-
-      p "========UPDate call Values====="
-      p @product.id
+      @product.id
       SpreeApfusion::Product.generate_product_hash 
       SpreeApfusion::OAuth.send(:DELETE, '/api/v2/products/'+@product.id.to_s+'.json', {product: @product_hash}) 
     end  
@@ -47,10 +41,9 @@ module SpreeApfusion
     end
 
     def self.add_option_type_id
-      p"======OptionType CALLED=="
       @product_hash["option_type_ids"] = @product.option_types.collect(&:id)
 
-      p @product.option_types.collect(&:id)
+      @product.option_types.collect(&:id)
     end
 
     def self.add_sku

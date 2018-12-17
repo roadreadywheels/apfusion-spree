@@ -4,30 +4,15 @@ Spree::Image.class_eval do
 		after_destroy :destroy_at_apfusion
 
 		def create_at_apfusion
-			p 'SYNC APFUSION image create_at_apfusion'
-			p '.'*50
-			p self.as_json
-			p SpreeApfusion::Image.create(self)
-			# p SpreeApfusion::Image.create()
-			p '.'*50
+			SpreeApfusion::Image.create(self)
 		end
 
 		def update_at_apfusion
-			p 'UPDate APFUSION'
-			p '.'*50
-			p self.as_json
-			p SpreeApfusion::Image.update(self)
-			# p SpreeApfusion::Image.create()
-			p '.'*50
+			SpreeApfusion::Image.update(self)
 		end
 
 		def destroy_at_apfusion
-			p 'SYNC APFUSION'
-			p '.'*50
-			p self.as_json
-			p SpreeApfusion::Image.destroy(self)
-			# p SpreeApfusion::Image.create()
-			p '.'*50
+			SpreeApfusion::Image.destroy(self)
 		end
 
 		def self.create_all_images
