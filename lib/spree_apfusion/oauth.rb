@@ -82,11 +82,11 @@ module SpreeApfusion
 				url: @url+url_path+'?access_token='+@access_token,
 				headers: {params: data}
 			)
-
+			begin
 			response = request.execute {|response| $results = response}
 
 			response.body
-			begin
+			
 				response_body = JSON.parse(response.body)
 			rescue
 				response_body = ''
