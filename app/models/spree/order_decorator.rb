@@ -26,7 +26,7 @@ Spree::Order.class_eval do
 						end
 						begin
 						 quantity = line_item["quantity"]
-							@order.contents.add(variant,quantity)
+							@order.contents.add(variant,quantity, {},variant.bsap_amount)
 						rescue ActiveRecord::ReproductscordInvalid => e
 							error = e.record.errors.full_messages.join(', ')
 						end
