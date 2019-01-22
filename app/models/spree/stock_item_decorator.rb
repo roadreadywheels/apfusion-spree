@@ -8,10 +8,16 @@ Spree::StockItem.class_eval do
 		SpreeApfusion::StockItem.create(self)
 	end
 
-	def update_at_apfusion
-		SpreeApfusion::StockItem.update(self)
-	end
+	
 
+	def update_at_apfusion
+		begin
+			SpreeApfusion::StockItem.update(self)
+			
+		rescue 
+			
+		end
+	end
 
 	def destroy_at_apfusion
 		SpreeApfusion::StockItem.destroy(self)

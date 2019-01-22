@@ -31,7 +31,7 @@ Spree::Product.class_eval do
 					SpreeApfusion::ProductProperty.create(product_property)
 				end	
 			end 
-			Spree::Image.create_all_images
+				Spree::Image.create_all_images	
 		end
 
 		def self.create_product_properties
