@@ -5,7 +5,12 @@ Spree::StockItem.class_eval do
 
 
 	def create_at_apfusion
-		SpreeApfusion::StockItem.create(self)
+		begin
+			
+			SpreeApfusion::StockItem.create(self)
+		rescue 
+			
+		end
 	end
 
 	
