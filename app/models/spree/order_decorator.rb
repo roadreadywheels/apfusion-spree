@@ -14,6 +14,8 @@ Spree::Order.class_eval do
 		 			@order = Spree::Order.new
 				 	order["bill_address_attributes"].delete('id')
 				 	order["ship_address_attributes"].delete('id')
+				 	order["bill_address_attributes"].delete('email')
+				 	order["ship_address_attributes"].delete('email')
 				 	bill_address = order["bill_address_attributes"]
 				 	ship_address = order["ship_address_attributes"]
 				 	orders_attributes = {'bill_address_attributes'=>bill_address,'ship_address_attributes'=>ship_address,'email'=>order['email'],'apfusion_order_id'=>order['id']}
@@ -21,7 +23,7 @@ Spree::Order.class_eval do
 					order["line_items"].each do |line_item|
 						if line_item["product_id"].present?
 							variant = Spree::Product.find(line_item["product_id"]).master
-						else
+						else			
 							variant = Spree::Variant.find(line_item["source_id"]).master
 						end
 						begin
@@ -75,4 +77,16 @@ Spree::Order.class_eval do
 		 	end	
 		end 	
 	end
+
+	def deliver_order_confirmation_email
+		p "deliver order confirmation called"*20
+		unless self.apfusion_order_id.present?
+	  	Spree::OrderMailer.confirm_email(id).deliver_later
+	  	update_column(:confirmation_delivered, true)
+	  end	
+	end
+
 end
+
+
+
