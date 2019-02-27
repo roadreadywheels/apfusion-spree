@@ -7,7 +7,7 @@ module SpreeApfusion
 			urls = {
 				"development" => "http://localhost:3000/",
 				"staging" => "http://34.217.121.110/",
-				"production" => "http://apfusion.com/"
+				"production" => "https://apfusion.com/"
 			}
 		 	 	@url = urls[Rails.env]
 				@grant_type = 'client_credentials'
@@ -92,17 +92,22 @@ module SpreeApfusion
 				response_body = ''
 			end
 
-			case response.code.to_s
+			begin
+				
+				case response.code.to_s
 
-				when /^20/
-					p 'SYNC Successfully'
-					return {success: true, response: response_body, response_code: response.code}
-				when '401'
-					p '!!!!Invalid Access Token!!!!'
-					ApfusionToken.destroy_all
-					SpreeApfusion::OAuth.send(method, url_path, data)
-				else
-					return {success: false, response: response_body, response_code: response.code}
+					when /^20/
+						p 'SYNC Successfully'
+						return {success: true, response: response_body, response_code: response.code}
+					when '401'
+						p '!!!!Invalid Access Token!!!!'
+						ApfusionToken.destroy_all
+						SpreeApfusion::OAuth.send(method, url_path, data)
+					else
+						return {success: false, response: response_body, response_code: response.code}
+				end
+			rescue Exception => e
+				p e.message
 			end
 			# p 1
 			# SpreeApfusion::OAuth.authorize
