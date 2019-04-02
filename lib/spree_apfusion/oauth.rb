@@ -69,7 +69,7 @@ module SpreeApfusion
 			{status: 'Authorized!', access_token: @access_token}
 		end
 
-		def self.send (method, url_path, data)
+		def self.send (method, url_path	, data)
 			p '========================'
 			p "Method: #{method}"
 			p "Url: #{url_path}"

@@ -1,64 +1,111 @@
 Spree::Order.class_eval do
 	def self.sync_orders
-		p "sync ordre clladed"*5
+
 		response = SpreeApfusion::Order.get_orders
-		response[:response].each do |order|
+		response.each do |order|
 			p "response called"*8
-			p order
-			p "===="*20
-		 	p order_ids = Spree::Order.all.collect(&:apfusion_order_id)
-		 	unless order_ids.include?(order['id'])
-		 		p "unless called"
+
 		 		begin
 		 			p "begin called"
 		 			@order = Spree::Order.new
-				 	order["bill_address_attributes"].delete('id')
-				 	order["ship_address_attributes"].delete('id')
-				 	order["bill_address_attributes"].delete('email')
-				 	order["ship_address_attributes"].delete('email')
-				 	bill_address = order["bill_address_attributes"]
-				 	ship_address = order["ship_address_attributes"]
+				 	order["bill_address"].delete('id')
+				 	order["ship_address"].delete('id')
+				 	order["bill_address"].delete('email')
+				 	order["ship_address"].delete('email')
+				 	order["bill_address"].delete('customer_number')
+				 	order["ship_address"].delete('customer_number')
+				 	order["bill_address"].delete('full_name')
+				  order["ship_address"].delete('full_name')
+				  order["bill_address"].delete('state_text')
+				  order["ship_address"].delete('state_text')
+				 	bill_address = order["bill_address"]
+				 	ship_address = order["ship_address"]
 				 	orders_attributes = {'bill_address_attributes'=>bill_address,'ship_address_attributes'=>ship_address,'email'=>order['email'],'apfusion_order_id'=>order['id']}
 
-					order["line_items"].each do |line_item|
-						if line_item["product_id"].present?
-							variant = Spree::Product.find(line_item["product_id"]).master
-						else			
-							variant = Spree::Variant.find(line_item["source_id"]).master
-						end
-						begin
-						 quantity = line_item["quantity"]
-							@order.contents.add(variant,quantity, {},variant.bsap_amount)
-						rescue ActiveRecord::ReproductscordInvalid => e
-							error = e.record.errors.full_messages.join(', ')
-						end
-					end
-					orders_attributes
-					@order.update_attributes(orders_attributes)
-					@order.next
-					@order.next
 
 					order["line_items"].each do |line_item|
-						p "line_item"*20
-						p line_item
-						p "===="*20
-						p shipping_method_name = line_item["shipping_method"]["linked_from"]
-						p line_item["shipping"]
-						p shipping_method_name.present?
-						if shipping_method_name.present?
-							p @shipping_method_id =  Spree::ShippingMethod.find_by_name(shipping_method_name)
-							@order.shipments.each do |shipment| 
-								shipment.update_attributes(apfusion_shipment_id: line_item["shipping"]["number"] )
-								shipment.shipping_rates.update_all(selected: false)
-								shipment.shipping_rates.find_by_shipping_method_id(@shipping_method_id).update_attributes(selected: true)
-							end	
-							@order.update_totals
-			        @order.persist_totals
-			      else
-			      	p "else callde"*20
-			      	@order.shipments.last.update_attributes(apfusion_shipment_id: line_item["shipping"]["number"] )
-				    end  
-					end	
+						p "Line item called"
+						p "=============================="*8
+
+						if line_item["variant"]["is_master"] == true
+							variant = Spree::Product.find(line_item["source_id"]).master
+						else			
+							variant = Spree::Variant.find(line_item["source_id"])
+						end
+						p line_item["quantity"]
+						begin
+						  quantity = line_item["quantity"]
+							@order.contents.add(variant, quantity, {}, line_item["price"])
+						rescue ActiveRecord::ReproductscordInvalid => e
+							error = e.record.errors.full_messages.join(', ')
+						end	
+					end
+
+
+
+					orders_attributes
+				 	@order.update_attributes(orders_attributes)
+					@order.next
+					@order.next
+					@order.shipments.destroy_all
+					@order.line_items.destroy_all
+					order["shipments"].each do |shipment|
+						shipping_method_name = shipment["shiping_method_name"]["linked_from"]
+						@shipping_method =  Spree::ShippingMethod.find_by_name(shipping_method_name)
+	          stock_location = Spree::StockLocation.find_by_name(shipment["stock_location_name"])
+	          @shipment = @order.shipments.create(stock_location_id: stock_location.id, apfusion_shipment_id: shipment["number"])
+	          @shipment.shipping_rates.create(shipping_method: @shipping_method, selected: true, cost: shipment["cost"])
+						shipment["manifest"].each do |menifest|
+							price = 0
+							quantity = menifest["quantity"]
+							variant = nil
+							order["line_items"].each do |line_item|
+								if line_item["variant_id"] == menifest["variant_id"]
+									price = line_item["price"]
+									if line_item["variant"]["is_master"] == true
+										variant = Spree::Product.find(line_item["source_id"]).master
+									else			
+										variant = Spree::Variant.find(line_item["source_id"])
+									end
+									@order.contents.add(variant, quantity, {shipment: @shipment}, price)
+									# line_item_id = @order.line_items.where(variant_id: variant.id).last
+									# @order.inventory_units.create(state: "on_hand", variant_id: variant.id, shipment_id: @shipment.id, line_item_id: line_item_id)
+								end 
+
+							end
+							
+	          	
+	          end
+	          
+					end
+					@order.update_totals
+			    @order.persist_totals
+					
+					# @order.next
+					# order["shipments"].each do |shipment|
+					# 	p shipment["number"]
+					# 	p 
+
+					# 	# p shipping_method_name.present?
+					# 	if shipping_method_name.present?
+					# 		p @shipping_method =  Spree::ShippingMethod.find_by_name(shipping_method_name)
+					# 		@order.shipments.each do |order_shipment| 
+					# 			p order_shipment
+					# 			p shipment["number"]
+					# 			order_shipment.update_attributes(apfusion_shipment_id: shipment["number"] )
+					# 			# p order_shipment.shipping_rates
+					# 		  order_shipment.shipping_rates.create(shipping_method: @shipping_method, selected: false, cost: 0)
+					# 			# order_shipment.shipping_rates.update_all(selected: false)
+					# 			# order_shipment.shipping_rates.find_by_shipping_method_id(@shipping_method).update_attributes(selected: true)
+					# 		end	
+					# 		@order.update_totals
+			  #       @order.persist_totals
+			      
+			  #     	# p "else callde"*20
+			  #     	# @order.shipments.last.update_attributes(apfusion_shipment_id: line_item["shipping"]["number"] )
+				 #    end  
+					# end	
+					# @order.next
 
 					check_payment_method = Spree::PaymentMethod.where(name: "Create at Apfusion").last
 					if check_payment_method.present?
@@ -69,14 +116,19 @@ Spree::Order.class_eval do
 					@order.payments.create(amount: @order.total, payment_method_id: payment_method.id)
 					@order.next
 					@order.next
+					@order.next
+					@order.next
 					
 
 		 		rescue Exception => e
 		 			p e.message
 		 		end
-		 	end	
+		 	
 		end 	
 	end
+
+
+
 
 	def deliver_order_confirmation_email
 		p "deliver order confirmation called"*20
