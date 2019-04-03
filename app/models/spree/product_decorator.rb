@@ -1,7 +1,7 @@
 Spree::Product.class_eval do
-		after_create :create_at_apfusion
-		after_update :update_at_apfusion
-		after_destroy :destroy_at_apfusion
+		# after_create :create_at_apfusion
+		# after_update :update_at_apfusion
+		# after_destroy :destroy_at_apfusion
 
 
 		def create_at_apfusion
@@ -44,8 +44,18 @@ Spree::Product.class_eval do
 		end
 
 		def self.update_product
-			Spree::Product.all.each do |product|
+			# product = Spree::Product.find_by_name("1985-1997 16x6 Ford F350 Steel Wheel / Rim")
+			# product.stock_items.each do |stock_item|
+			#  	SpreeApfusion::StockItem.update(stock_item)
+			# end
+			Spree::Product.all.each do |product|	
 				SpreeApfusion::Product.update(product)
+				product.stock_items.each do |stock_item|
+					SpreeApfusion::StockItem.update(stock_item)
+				end
+				# product.product_properties.each do |product_property|
+				# 	SpreeApfusion::ProductProperty.update(product_property)
+				# end	
 			end	
 		end
 
