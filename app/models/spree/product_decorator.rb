@@ -43,19 +43,25 @@ Spree::Product.class_eval do
 			end	
 		end
 
+		def self.update_one_product
+			# Spree::StockLocation.all.each do |stock_location|
+			# 	SpreeApfusion::StockLocation.update(stock_location)
+			# end 
+			product = Spree::Product.find_by_name("Apfusion product 8")
+			# SpreeApfusion::Product.create(product)
+				product.stock_items.each do |stock_item|
+						SpreeApfusion::StockItem.update(stock_item)
+				end
+
+		end
+
+
 		def self.update_product
-			# product = Spree::Product.find_by_name("1985-1997 16x6 Ford F350 Steel Wheel / Rim")
-			# product.stock_items.each do |stock_item|
-			#  	SpreeApfusion::StockItem.update(stock_item)
-			# end
 			Spree::Product.all.each do |product|	
 				SpreeApfusion::Product.update(product)
 				product.stock_items.each do |stock_item|
 					SpreeApfusion::StockItem.update(stock_item)
 				end
-				# product.product_properties.each do |product_property|
-				# 	SpreeApfusion::ProductProperty.update(product_property)
-				# end	
 			end	
 		end
 
