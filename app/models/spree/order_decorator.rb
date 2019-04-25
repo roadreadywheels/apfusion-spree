@@ -126,6 +126,8 @@ Spree::Order.class_eval do
 					@order.next
 					@order.next
 					@order.adjustments.destroy_all
+					@order.update_totals
+			    @order.persist_totals
 					@order.next
 					@order.next
 					
