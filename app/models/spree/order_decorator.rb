@@ -1,4 +1,4 @@
-Spree::Order.class_eval do
+   Spree::Order.class_eval do
 	def self.sync_orders
 
 		response = SpreeApfusion::Order.get_orders
@@ -89,7 +89,7 @@ Spree::Order.class_eval do
 					end
 					@order.update_totals
 			    @order.persist_totals
-					
+			    
 					# # @order.next
 					# # order["shipments"].each do |shipment|
 					# # 	p shipment["number"]
@@ -100,7 +100,7 @@ Spree::Order.class_eval do
 					# # 		p @shipping_method =  Spree::ShippingMethod.find_by_name(shipping_method_name)
 					# # 		@order.shipments.each do |order_shipment| 
 					# # 			p order_shipment
-					# # 			p shipment["number"]
+					# # 			p shipment["numdfssssssssssber"]
 					# # 			order_shipment.update_attributes(apfusion_shipment_id: shipment["number"] )
 					# # 			# p order_shipment.shipping_rates
 					# # 		  order_shipment.shipping_rates.create(shipping_method: @shipping_method, selected: false, cost: 0)
@@ -125,6 +125,9 @@ Spree::Order.class_eval do
 					@order.payments.create(amount: @order.total, payment_method_id: payment_method.id)
 					@order.next
 					@order.next
+					p "dfssssssssss"*20
+					@order.adjustments.destroy_all
+					p "==================="*20
 					@order.next
 					@order.next
 					
