@@ -47,6 +47,7 @@ Spree::Product.class_eval do
 			# Spree::StockLocation.all.each do |stock_location|
 			# 	SpreeApfusion::StockLocation.update(stock_location)
 			# end 
+
 			product = Spree::Product.find_by_name("Apfusion product 8")
 			SpreeApfusion::Product.update(product)
 				# product.stock_items.each do |stock_item|

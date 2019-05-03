@@ -22,4 +22,10 @@ Spree::StockLocation.class_eval do
 			end 
 		end
 
+		def self.update_all_stock_locations
+			Spree::StockLocation.all.each do |stock_location|
+				SpreeApfusion::StockLocation.update(stock_location)
+			end 
+		end
+
 	end

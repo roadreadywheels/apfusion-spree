@@ -33,9 +33,9 @@
 				  order["ship_address"].delete('country')
 				 	p bill_address = order["bill_address"]
 				 	p ship_address = order["ship_address"]
-
-				 	orders_attributes = {'bill_address_attributes'=>bill_address,'ship_address_attributes'=>ship_address,'email'=>order['email'],'apfusion_order_id'=>order['id']}
-
+				 	p "================"*20
+				 	p orders_attributes = {'bill_address_attributes'=>bill_address,'ship_address_attributes'=>ship_address,'email'=>order['email'],'special_instructions'=>order['special_instructions'],'apfusion_order_id'=>order['id']}
+				 	p "================"*20
 
 					order["line_items"].each do |line_item|
 						if line_item["variant"]["is_master"] == true
@@ -125,9 +125,10 @@
 					@order.payments.create(amount: @order.total, payment_method_id: payment_method.id)
 					@order.next
 					@order.next
-					p "dfssssssssss"*20
+
 					@order.adjustments.destroy_all
-					p "==================="*20
+					@order.update_totals
+			    @order.persist_totals
 					@order.next
 					@order.next
 					
