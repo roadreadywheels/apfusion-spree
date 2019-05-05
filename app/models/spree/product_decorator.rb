@@ -50,8 +50,8 @@ Spree::Product.class_eval do
 
 			product = Spree::Product.find_by_name("Apfusion product 8")
 			# SpreeApfusion::Product.create(product)
-				product.product_properties.each do |product_property|
-					SpreeApfusion::ProductProperty.update(product_property)
+				product.images.each do |image|
+					SpreeApfusion::Image.update(image)
 			  end
 
 		end

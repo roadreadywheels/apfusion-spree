@@ -6,7 +6,7 @@ module SpreeApfusion
       @image.viewable.product.id
       @image_hash 
       SpreeApfusion::Image.generate_image_hash 
-      response = SpreeApfusion::OAuth.send(:post, '/api/v2/products/'+@image.viewable.product.id.to_s+'/images.json', {image: @image_hash})[:response]
+      response = SpreeApfusion::OAuth.send(:post, '/api/v2/products/'+@image.viewable.product.apfusion_product_id.to_s+'/images.json', {image: @image_hash})[:response]
       @image.update_attributes(apfusion_image_id: response["id"]) 
     end
 
@@ -14,8 +14,7 @@ module SpreeApfusion
       @image = image
       @image.id
       SpreeApfusion::Image.generate_image_hash 
-      response = SpreeApfusion::OAuth.send(:PUT, '/api/v2/products/'+@image.viewable.product.id.to_s+'/images/'+@image.id.to_s+'.json', {image: @image_hash})[:response]
-      @image.update_attributes(apfusion_image_id: response["id"]) 
+      SpreeApfusion::OAuth.send(:PUT, '/api/v2/products/'+@image.viewable.product.apfusion_product_id.to_s+'/images/'+@image.apfusion_image_id.to_s+'.json', {image: @image_hash})[:response]
     end
 
 
@@ -23,7 +22,7 @@ module SpreeApfusion
       @image = image
       @image.id
       SpreeApfusion::Image.generate_image_hash 
-      SpreeApfusion::OAuth.send(:DELETE ,'/api/v2/products/'+@image.viewable.product.id.to_s+'/images/'+@image.id.to_s+'.json', {image: @image_hash})
+      SpreeApfusion::OAuth.send(:DELETE ,'/api/v2/products/'+@image.viewable.product.apfusion_product_id.to_s+'/images/'+@image.id.to_s+'.json', {image: @image_hash})
     end
     
 
@@ -41,24 +40,18 @@ module SpreeApfusion
       
     end
 
-    def self.check_variant_is_master 
-      is_master = @image.viewable.is_master 
-      if is_master == true
-        @image_hash["is_master"] = is_master
-      end  
-    end
+   
 
 
     def self.add_variant_id
-      @image_hash["variant_id"] = @image.viewable.id
+      @image_hash["viewable_id"] = @image.viewable.apfusion_variant_id
       
     end
 
 
     def self.generate_image_hash 
       @image_hash = @image.attributes
-      SpreeApfusion::Image.add_image_attachment
-      SpreeApfusion::Image.check_variant_is_master
+      SpreeApfusion::Image.add_image_attachment 
       SpreeApfusion::Image.add_variant_id
     end
 
