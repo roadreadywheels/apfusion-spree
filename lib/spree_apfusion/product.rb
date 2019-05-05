@@ -7,6 +7,7 @@ module SpreeApfusion
       SpreeApfusion::Product.generate_product_hash 
   		response = SpreeApfusion::OAuth.send(:post, '/api/v2/products.json', {product: @product_hash})[:response]
       @product.update_attributes(apfusion_product_id: response["id"])
+      @product.master.update_attributes(apfusion_variant_id: response["master"]["id"])
   	end
 
 
@@ -16,6 +17,7 @@ module SpreeApfusion
       SpreeApfusion::Product.generate_product_hash 
       response = SpreeApfusion::OAuth.send(:PUT, '/api/v2/products/'+@product.apfusion_product_id.to_s+'.json', {product: @product_hash})[:response]
         @product.update_attributes(apfusion_product_id: response["id"])
+        @product.master.update_attributes(apfusion_variant_id: response["master"]["id"])
     end  
 
     def self.destroy product

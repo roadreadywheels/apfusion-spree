@@ -49,10 +49,10 @@ Spree::Product.class_eval do
 			# end 
 
 			product = Spree::Product.find_by_name("Apfusion product 8")
-			SpreeApfusion::Product.update(product)
-				# product.stock_items.each do |stock_item|
-				# 		SpreeApfusion::StockItem.update(stock_item)
-				# end
+			# SpreeApfusion::Product.create(product)
+				product.product_properties.each do |product_property|
+					SpreeApfusion::ProductProperty.update(product_property)
+			  end
 
 		end
 

@@ -4,13 +4,9 @@ module SpreeApfusion
     def self.create stock_item
       @stock_item = stock_item
       @stock_item_hash 
-      @stock_item.stock_location_id
       SpreeApfusion::StockItem.generate_stock_item_hash 
-      response = SpreeApfusion::OAuth.send(:post, '/api/v2/stock_locations/'+@stock_item.stock_location_id.to_s+'/stock_items.json', {stock_item: @stock_item_hash})[:response]
-      p "+++++++++"*8
-      p response
-      p "=========="*8
-       # @stock_item.update_attributes(apfusion_stock_item_id: response["id"])
+      response = SpreeApfusion::OAuth.send(:post, '/api/v2/stock_locations/'+@stock_item.stock_location.apfusion_stock_location_id.to_s+'/stock_items.json', {stock_item: @stock_item_hash})[:response]
+      @stock_item.update_attributes(apfusion_stock_item_id: response["id"])
 
     end
 
@@ -18,8 +14,7 @@ module SpreeApfusion
       @stock_item = stock_item
       @stock_item.id
       SpreeApfusion::StockItem.generate_stock_item_hash 
-      response = SpreeApfusion::OAuth.send(:PUT, '/api/v2/stock_locations/'+@stock_item.stock_location_id.to_s+'/stock_items/'+@stock_item.id.to_s+'.json', {stock_item: @stock_item_hash})[:response]
-      @stock_item.update_attributes(apfusion_stock_item_id: response["id"])
+      SpreeApfusion::OAuth.send(:PUT, '/api/v2/stock_locations/'+@stock_item.stock_location.apfusion_stock_location_id.to_s+'/stock_items/'+@stock_item.apfusion_stock_item_id.to_s+'.json', {stock_item: @stock_item_hash})
     end
 
 
@@ -27,23 +22,27 @@ module SpreeApfusion
       @stock_item = stock_item
       @stock_item.id
       SpreeApfusion::StockItem.generate_stock_item_hash 
-      SpreeApfusion::OAuth.send(:DELETE ,'/api/v2/stock_locations/'+@stock_item.stock_location_id.to_s+'/stock_items/'+@stock_item.id.to_s+'.json', {stock_item: @stock_item_hash})
+      SpreeApfusion::OAuth.send(:DELETE ,'/api/v2/stock_locations/'+@stock_item.stock_location.apfusion_stock_location_id.to_s+'/stock_items/'+@stock_item.apfusion_stock_item_id.to_s+'.json', {stock_item: @stock_item_hash})
     end
 
 
     def self.generate_stock_item_hash 
       @stock_item_hash = @stock_item.attributes
-      SpreeApfusion::StockItem.check_variant_is_master
+      @stock_item_hash["stock_location_id"] = @stock_item.stock_location.apfusion_stock_location_id
+      @stock_item_hash["variant_id"] = @stock_item.variant.apfusion_variant_id
       @stock_item_hash["force"] = true
-      
+       
      
     end
 
-    def self.check_variant_is_master 
-      if @stock_item.variant.is_master == true
-        @stock_item_hash["product_id"] = @stock_item.variant.product_id
-      end  
-    end
+    # def self.check_variant_is_master 
+    #   if @stock_item.variant.is_master == true
+    #     @stock_item_hash["variant_id"] = @stock_item.variant.product.apfusion_product_id
+    #   else
+    #     @stock_item_hash["variant_id"] = @stock_item.variant.apfusion_variant_id
+    #   end  
+
+    # end
 
 
   end

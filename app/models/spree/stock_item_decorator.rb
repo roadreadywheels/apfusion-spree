@@ -13,7 +13,6 @@ Spree::StockItem.class_eval do
 		end
 	end
 
-	
 
 	def update_at_apfusion
 		begin

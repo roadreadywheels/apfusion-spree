@@ -6,14 +6,16 @@ module SpreeApfusion
       @image.viewable.product.id
       @image_hash 
       SpreeApfusion::Image.generate_image_hash 
-      SpreeApfusion::OAuth.send(:post, '/api/v2/products/'+@image.viewable.product.id.to_s+'/images.json', {image: @image_hash})
+      response = SpreeApfusion::OAuth.send(:post, '/api/v2/products/'+@image.viewable.product.id.to_s+'/images.json', {image: @image_hash})[:response]
+      @image.update_attributes(apfusion_image_id: response["id"]) 
     end
 
     def self.update image
       @image = image
       @image.id
       SpreeApfusion::Image.generate_image_hash 
-      SpreeApfusion::OAuth.send(:PUT, '/api/v2/products/'+@image.viewable.product.id.to_s+'/images/'+@image.id.to_s+'.json', {image: @image_hash})
+      response = SpreeApfusion::OAuth.send(:PUT, '/api/v2/products/'+@image.viewable.product.id.to_s+'/images/'+@image.id.to_s+'.json', {image: @image_hash})[:response]
+      @image.update_attributes(apfusion_image_id: response["id"]) 
     end
 
 

@@ -10,7 +10,7 @@ Spree::Property.class_eval do
 
 			
 		def self.create_all_property
-			Spree::Property.all.each do |property|
+			Spree::Property.where(apfusion_property_id: nil).each do |property|
 				SpreeApfusion::Property.create(property)
 			end 
 		end
@@ -22,6 +22,12 @@ Spree::Property.class_eval do
 
 		def destroy_at_apfusion
 			SpreeApfusion::Property.destroy(self)
+		end
+
+		def self.update_all_property
+			Spree::Property.all.each do |property|
+				SpreeApfusion::Property.update(property)
+			end 
 		end
 
 	end
