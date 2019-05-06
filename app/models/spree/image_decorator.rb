@@ -16,7 +16,7 @@ Spree::Image.class_eval do
 		end
 
 		def self.create_all_images
-			Spree::Image.all.each do |image|
+			Spree::Image.where(apfusion_image_id: nil).each do |image|
 				SpreeApfusion::Image.create(image)
 			end		
 

@@ -21,13 +21,13 @@ Spree::Product.class_eval do
 		def self.create_all_products
 			Spree::StockLocation.create_all_stock_locations	
 			Spree::Property.create_all_property
-			Spree::Product.all.each do |product|
+			Spree::Product.where(apfusion_product_id: nil).each do |product|
 				SpreeApfusion::Product.create(product)
-				product.stock_items.each do |stock_item|
+				product.stock_items.where(apfusion_stock_item_id: nil).each do |stock_item|
 					SpreeApfusion::StockItem.create(stock_item)
 				end
-				product.product_properties.each do |product_property|
-
+				product.product_properties.where(apfusion_product_property_id: nil).each do |product_property|
+					
 					SpreeApfusion::ProductProperty.create(product_property)
 				end	
 			end 
