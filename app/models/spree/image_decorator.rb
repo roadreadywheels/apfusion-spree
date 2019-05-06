@@ -21,5 +21,13 @@ Spree::Image.class_eval do
 			end		
 
 		end
+		
+		def self.update_all_images
+			Spree::Image.all.each do |image|
+				SpreeApfusion::Image.update(image)
+			end		
+		end
+
+
 
 	end

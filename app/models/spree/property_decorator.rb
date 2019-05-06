@@ -24,4 +24,10 @@ Spree::Property.class_eval do
 			SpreeApfusion::Property.destroy(self)
 		end
 
+		def self.update_all_property
+			Spree::Property.all.each do |property|
+				SpreeApfusion::Property.update(property)
+			end 
+		end
+
 	end

@@ -13,7 +13,8 @@ module SpreeApfusion
       p "========UPDate call====="
       p @property.id
       SpreeApfusion::Property.generate_property_hash 
-      SpreeApfusion::OAuth.send(:PUT, '/api/v2/properties/'+@property.id.to_s+'.json', {property: @property_hash})
+      response = SpreeApfusion::OAuth.send(:PUT, '/api/v2/properties/'+@property.id.to_s+'.json', {property: @property_hash})[:response]
+      @property.update_attributes(apfusion_property_id: response["id"])
     end
 
     def self.destroy property
