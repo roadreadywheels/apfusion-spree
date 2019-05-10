@@ -12,8 +12,10 @@ module SpreeApfusion
       @product_properties = product_properties
       @product_properties.id
       SpreeApfusion::ProductProperty.generate_product_properties_hash 
-      response = SpreeApfusion::OAuth.send(:PUT, '/api/v2/products/'+@product_properties.product_id.to_s+'/product_properties/'+@product_properties.id.to_s+'.json', {product_property: @product_properties_hash})[:response] 
-      @product_properties.update_attributes(apfusion_product_property_id: response["id"]) 
+      response = SpreeApfusion::OAuth.send(:PUT, '/api/v2/products/'+@product_properties.product_id.to_s+'/product_properties/'+@product_properties.id.to_s+'.json', {product_property: @product_properties_hash})
+      if response[:success] == true                 
+        @product_properties.update_attributes(apfusion_product_property_id: response[:response]["id"]) 
+      end  
     end
 
     def self.destroy product_properties

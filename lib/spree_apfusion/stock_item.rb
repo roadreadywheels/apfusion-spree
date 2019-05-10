@@ -14,8 +14,11 @@ module SpreeApfusion
       @stock_item = stock_item
       @stock_item.id
       SpreeApfusion::StockItem.generate_stock_item_hash 
-      response = SpreeApfusion::OAuth.send(:PUT, '/api/v2/stock_locations/'+@stock_item.stock_location_id.to_s+'/stock_items/'+@stock_item.id.to_s+'.json', {stock_item: @stock_item_hash})[:response]
-      @stock_item.update_attributes(apfusion_stock_item_id: response["id"])
+      response = SpreeApfusion::OAuth.send(:PUT, '/api/v2/stock_locations/'+@stock_item.stock_location_id.to_s+'/stock_items/'+@stock_item.id.to_s+'.json', {stock_item: @stock_item_hash})
+      if response[:success] == true                 
+         @stock_item.update_attributes(apfusion_stock_item_id: response[:response]["id"])
+      end   
+
     end
 
 

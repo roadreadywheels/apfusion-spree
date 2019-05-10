@@ -13,8 +13,10 @@ module SpreeApfusion
       @image = image
       @image.id
       SpreeApfusion::Image.generate_image_hash 
-      response = SpreeApfusion::OAuth.send(:PUT, '/api/v2/products/'+@image.viewable.product.id.to_s+'/images/'+@image.id.to_s+'.json', {image: @image_hash})[:response]
-      @image.update_attributes(apfusion_image_id: response["id"]) 
+      response = SpreeApfusion::OAuth.send(:PUT, '/api/v2/products/'+@image.viewable.product.id.to_s+'/images/'+@image.id.to_s+'.json', {image: @image_hash})
+      if response[:success] == true                 
+        @image.update_attributes(apfusion_image_id: response[:response]["id"]) 
+      end 
     end
 
 
