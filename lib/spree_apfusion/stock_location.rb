@@ -11,8 +11,12 @@ module SpreeApfusion
       @stock_location = stock_location
       @stock_location.id
       SpreeApfusion::StockLocation.generate_stock_location_hash 
-      response = SpreeApfusion::OAuth.send(:PUT, '/api/v2/stock_locations/'+@stock_location.id.to_s+'.json', {stock_location: @stock_location_hash})[:response]
-      @stock_location.update_attributes(apfusion_stock_location_id: response["id"])
+      response = SpreeApfusion::OAuth.send(:PUT, '/api/v2/stock_locations/'+@stock_location.id.to_s+'.json', {stock_location: @stock_location_hash})
+
+      if response[:success] == true                 
+        @stock_location.update_attributes(apfusion_stock_location_id: response[:response]["id"])
+      end   
+
     end
 
     def self.destroy stock_location

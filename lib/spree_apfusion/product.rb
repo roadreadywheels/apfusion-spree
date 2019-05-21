@@ -5,9 +5,11 @@ module SpreeApfusion
       @product = product
       @product_hash 
       SpreeApfusion::Product.generate_product_hash 
-  		response = SpreeApfusion::OAuth.send(:post, '/api/v2/products.json', {product: @product_hash})[:response]
-      @product.update_attributes(apfusion_product_id: response["id"])
-      @product.master.update_attributes(apfusion_variant_id: response["master"]["id"])
+  		response = SpreeApfusion::OAuth.send(:post, '/api/v2/products.json', {product: @product_hash})
+      if response[:success] == true                 
+        @product.update_attributes(apfusion_product_id: response[:response]["id"])
+        @product.master.update_attributes(apfusion_variant_id: response[:response]["master"]["id"])
+      end   
   	end
 
 
@@ -15,7 +17,7 @@ module SpreeApfusion
       @product = product
       @product.apfusion_product_id
       SpreeApfusion::Product.generate_product_hash 
-      p response = SpreeApfusion::OAuth.send(:PUT, '/api/v2/products/'+@product.id.to_s+'.json', {product: @product_hash})
+      response = SpreeApfusion::OAuth.send(:PUT, '/api/v2/products/'+@product.id.to_s+'.json', {product: @product_hash})
       if response[:success] == true                 
         @product.update_attributes(apfusion_product_id: response[:response]["id"])
         @product.master.update_attributes(apfusion_variant_id: response[:response]["master"]["id"])
