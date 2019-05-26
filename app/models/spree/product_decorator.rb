@@ -47,12 +47,15 @@ Spree::Product.class_eval do
 			# Spree::StockLocation.all.each do |stock_location|
 			# 	SpreeApfusion::StockLocation.update(stock_location)
 			# end 
-
-			product = Spree::Product.find_by_name("Apfusion product 8")
-			# SpreeApfusion::Product.create(product)
-				product.images.each do |image|
-					SpreeApfusion::Image.update(image)
-			  end
+			# Spree::OptionType.last.option_values.each do |option_value|
+			# 	SpreeApfusion::OptionValue.create(option_value)
+			# end	
+			Spree::Product.last.variants.each do |variant|
+				SpreeApfusion::Variant.update(variant)	
+			end	
+			# 	product.images.each do |image|
+			# 		SpreeApfusion::Image.update(image)
+			#   end
 
 		end
 

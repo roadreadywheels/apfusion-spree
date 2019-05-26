@@ -49,9 +49,7 @@ module SpreeApfusion
     end
 
     def self.add_option_type_id
-      @product_hash["option_type_ids"] = @product.option_types.collect(&:id)
-
-      @product.option_types.collect(&:id)
+      @product_hash["option_type_ids"] = @product.option_types.collect(&:apfusion_option_type_id)
     end
 
     def self.add_sku
