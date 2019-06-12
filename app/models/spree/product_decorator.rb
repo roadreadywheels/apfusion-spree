@@ -61,8 +61,13 @@ Spree::Product.class_eval do
 
 
 		def self.update_product
+			Spree::StockLocation.create_all_stock_locations
 			Spree::Product.all.each do |product|	
-				SpreeApfusion::Product.update(product)
+				if product.apfusion_product_id.present?
+					SpreeApfusion::Product.update(product)
+				else
+					SpreeApfusion::Product.create(product)
+				end	
 				product.stock_items.each do |stock_item|
 					SpreeApfusion::StockItem.update(stock_item)
 				end
