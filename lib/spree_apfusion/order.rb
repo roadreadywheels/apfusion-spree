@@ -9,7 +9,7 @@ module SpreeApfusion
       @orders_hash = []
       page = 1
       loop do
-      	orders = SpreeApfusion::OAuth.send(:GET, '/api/v2/orders', {page: page, q: {id_gt: @order_id , s: "id asc", completed_at_not_null: true}})[:response]
+      	orders = SpreeApfusion::OAuth.send(:GET, '/api/v2/orders', {page: page, q: {completed_at_gt: @order.apfusion_completed_at}})[:response]
       	orders["orders"].each do |order|
 	      	order_details = SpreeApfusion::OAuth.send(:GET, "/api/v2/orders/#{order["number"]}", {})[:response]
       	@orders_hash.push(order_details)	
@@ -21,5 +21,5 @@ module SpreeApfusion
       return @orders_hash
     end
 
-  end
+  end 
 end
