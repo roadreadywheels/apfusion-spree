@@ -4,28 +4,22 @@ module SpreeApfusion
     def self.create property
       @property = property
       SpreeApfusion::Property.generate_property_hash 
-      SpreeApfusion::OAuth.send(:post, '/api/v2/properties.json', {property: @property_hash})
+      response = SpreeApfusion::OAuth.send(:post, '/api/v2/properties.json', {property: @property_hash})[:response]
+      @property.update_attributes(apfusion_property_id: response["id"])
     end
 
     def self.update property
       @property = property
-
-      p "========UPDate call====="
-      p @property.id
+      @property.id
       SpreeApfusion::Property.generate_property_hash 
-      response = SpreeApfusion::OAuth.send(:PUT, '/api/v2/properties/'+@property.id.to_s+'.json', {property: @property_hash})
-      if response[:success] == true                 
-       @property.update_attributes(apfusion_property_id: response[:response]["id"])
-      end  
-
+      SpreeApfusion::OAuth.send(:PUT, '/api/v2/properties/'+@property.apfusion_property_id.to_s+'.json', {property: @property_hash})
     end
 
     def self.destroy property
       @property = property
-      p "========Delete call====="
-      p @property.id
+      @property.id
       SpreeApfusion::Property.generate_property_hash
-      SpreeApfusion::OAuth.send(:DELETE , '/api/v2/properties/'+@property.id.to_s+'.json', {property: @property_hash})
+      SpreeApfusion::OAuth.send(:DELETE , '/api/v2/properties/'+@property.apfusion_property_id.to_s+'.json', {property: @property_hash})
     end
       
   

@@ -16,7 +16,6 @@ Spree::ProductProperty.class_eval do
 			SpreeApfusion::ProductProperty.destroy(self)
 		end
 
-
 		def self.update_all_product_properties
 			Spree::Product.all.each do |product|
 				product.product_properties.each do |product_property|

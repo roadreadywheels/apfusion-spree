@@ -17,7 +17,7 @@ Spree::StockLocation.class_eval do
 		end
 
 		def self.create_all_stock_locations
-			Spree::StockLocation.all.each do |stock_location|
+			Spree::StockLocation.where(apfusion_stock_location_id: nil).each do |stock_location|
 				SpreeApfusion::StockLocation.create(stock_location)
 			end 
 		end
@@ -27,5 +27,6 @@ Spree::StockLocation.class_eval do
 				SpreeApfusion::StockLocation.update(stock_location)
 			end 
 		end
+
 
 	end

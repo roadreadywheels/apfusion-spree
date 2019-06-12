@@ -17,11 +17,12 @@ module SpreeApfusion
       @product = product
       @product.apfusion_product_id
       SpreeApfusion::Product.generate_product_hash 
-      response = SpreeApfusion::OAuth.send(:PUT, '/api/v2/products/'+@product.id.to_s+'.json', {product: @product_hash})
+
+      response = SpreeApfusion::OAuth.send(:PUT, '/api/v2/products/'+@product.apfusion_product_id.to_s+'.json', {product: @product_hash})
       if response[:success] == true                 
         @product.update_attributes(apfusion_product_id: response[:response]["id"])
         @product.master.update_attributes(apfusion_variant_id: response[:response]["master"]["id"])
-      end                    
+      end     
     end  
 
     def self.destroy product
@@ -53,9 +54,7 @@ module SpreeApfusion
     end
 
     def self.add_option_type_id
-      @product_hash["option_type_ids"] = @product.option_types.collect(&:id)
-
-      @product.option_types.collect(&:id)
+      @product_hash["option_type_ids"] = @product.option_types.collect(&:apfusion_option_type_id)
     end
 
     def self.add_sku
