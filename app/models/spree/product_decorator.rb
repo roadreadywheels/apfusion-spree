@@ -43,6 +43,11 @@ Spree::Product.class_eval do
 			end	
 		end
 
+		def self.update_one_product
+			product = Spree::Product.find_by_name("2015 16x6.5 Ford Transit 150 Steel Wheel / Rim")
+			SpreeApfusion::Product.update(product)
+		end
+
 
 
 		def self.update_product
@@ -54,7 +59,11 @@ Spree::Product.class_eval do
 					SpreeApfusion::Product.create(product)
 				end	
 				product.stock_items.each do |stock_item|
-					SpreeApfusion::StockItem.update(stock_item)
+					if stock_item.apfusion_stock_item_id.present?
+						SpreeApfusion::StockItem.update(stock_item)
+					else
+						SpreeApfusion::StockItem.create(stock_item)
+					end	
 				end
 			end	
 		end

@@ -6,7 +6,7 @@ module SpreeApfusion
       @stock_item_hash 
       SpreeApfusion::StockItem.generate_stock_item_hash 
       response = SpreeApfusion::OAuth.send(:post, '/api/v2/stock_locations/'+@stock_item.stock_location.apfusion_stock_location_id.to_s+'/stock_items.json', {stock_item: @stock_item_hash})
-      if response[:success] == true                 
+      if response[:success] == true && response[:response].present? && response[:response]["id"].present?                
          @stock_item.update_attributes(apfusion_stock_item_id: response[:response]["id"])
       end
     end
