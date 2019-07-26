@@ -19,14 +19,14 @@
 				  order["ship_address"].delete('full_name')
 				  order["bill_address"].delete('state_text')
 				  order["ship_address"].delete('state_text')
-				  bill_state_id = Spree::State.find_by_name(order["bill_address"]["state"]["name"]).id
-				  bill_country_id = Spree::Country.find_by_name(order["bill_address"]["country"]["name"]).id
+				  bill_country = Spree::Country.find_by_name(order["bill_address"]["country"]["name"])
+				  ship_country = Spree::Country.find_by_name(order["ship_address"]["country"]["name"])
+				  bill_state_id = bill_country.states.find_by_name(order["bill_address"]["state"]["name"]).id
+				  ship_state_id = ship_country.states.find_by_name(order["ship_address"]["state"]["name"]).id
 				  order["bill_address"]["state_id"] = bill_state_id
-				  order["bill_address"]["country_id"] = bill_country_id
-				  ship_state_id = Spree::State.find_by_name(order["ship_address"]["state"]["name"]).id
-				  ship_country_id = Spree::Country.find_by_name(order["ship_address"]["country"]["name"]).id
+				  order["bill_address"]["country_id"] = bill_country.id
 				  order["ship_address"]["state_id"] = ship_state_id
-				  order["ship_address"]["country_id"] = ship_country_id
+				  order["ship_address"]["country_id"] = ship_country.id
 				  order["bill_address"].delete('state')
 				  order["ship_address"].delete('state')
 				  order["bill_address"].delete('country')
@@ -115,7 +115,6 @@
 				 # #    end  
 					# # end	
 					# # @order.next
-
 					check_payment_method = Spree::PaymentMethod.where(name: "Create at Apfusion").last
 					if check_payment_method.present?
 						payment_method = 	check_payment_method
