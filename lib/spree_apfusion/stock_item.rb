@@ -37,6 +37,8 @@ module SpreeApfusion
       @stock_item_hash["stock_location_id"] = @stock_item.stock_location.apfusion_stock_location_id
       @stock_item_hash["variant_id"] = @stock_item.variant.apfusion_variant_id
       @stock_item_hash["force"] = true
+      @stock_item_hash["sku"] = @stock_item.variant.sku
+      @stock_item_hash["filter_type"] = "id"
        
      
     end

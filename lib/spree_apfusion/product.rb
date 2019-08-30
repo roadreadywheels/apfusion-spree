@@ -32,6 +32,7 @@ module SpreeApfusion
       SpreeApfusion::Product.add_product_price
       SpreeApfusion::Product.add_option_type_id
       SpreeApfusion::Product.add_sku
+      SpreeApfusion::Product.add_filter_type
 
 
     end
@@ -54,6 +55,10 @@ module SpreeApfusion
 
     def self.add_sku
       @product_hash["sku"] = @product.sku
+    end
+
+    def self.add_filter_type
+      @product_hash["filter_type"] = "id"
     end
 
 	end
