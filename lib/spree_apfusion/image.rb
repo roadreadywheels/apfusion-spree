@@ -6,7 +6,7 @@ module SpreeApfusion
       @image.viewable.product.id
       @image_hash 
       SpreeApfusion::Image.generate_image_hash 
-      response = SpreeApfusion::OAuth.send(:post, '/api/v2/products/'+@image.viewable.product.apfusion_product_id.to_s+'/images.json', {image: @image_hash})[:response]
+      response = SpreeApfusion::OAuth.send(:post, '/api/v2/products/'+@image.viewable.product.apfusion_product_id.to_s+'/images.json', {image: @image_hash,filter_type: "id"})[:response]
       @image.update_attributes(apfusion_image_id: response["id"]) 
     end
 
@@ -14,7 +14,7 @@ module SpreeApfusion
       @image = image
       @image.id
       SpreeApfusion::Image.generate_image_hash 
-      SpreeApfusion::OAuth.send(:PUT, '/api/v2/products/'+@image.viewable.product.apfusion_product_id.to_s+'/images/'+@image.apfusion_image_id.to_s+'.json', {image: @image_hash})[:response]
+      SpreeApfusion::OAuth.send(:PUT, '/api/v2/products/'+@image.viewable.product.apfusion_product_id.to_s+'/images/'+@image.apfusion_image_id.to_s+'.json', {image: @image_hash,filter_type: "id"})[:response]
     end
 
 

@@ -17,7 +17,7 @@ module SpreeApfusion
       @product = product
       @product.apfusion_product_id
       SpreeApfusion::Product.generate_product_hash 
-      response = SpreeApfusion::OAuth.send(:PUT, '/api/v2/products/'+@product.apfusion_product_id.to_s+'.json', {product: @product_hash}) 
+      response = SpreeApfusion::OAuth.send(:PUT, '/api/v2/products/'+@product.apfusion_product_id.to_s+'.json', {product: @product_hash,filter_type: "id"}) 
     end  
 
     def self.destroy product
@@ -32,8 +32,6 @@ module SpreeApfusion
       SpreeApfusion::Product.add_product_price
       SpreeApfusion::Product.add_option_type_id
       SpreeApfusion::Product.add_sku
-      SpreeApfusion::Product.add_filter_type
-
 
     end
 
@@ -57,9 +55,6 @@ module SpreeApfusion
       @product_hash["sku"] = @product.sku
     end
 
-    def self.add_filter_type
-      @product_hash["filter_type"] = "id"
-    end
 
 	end
 end

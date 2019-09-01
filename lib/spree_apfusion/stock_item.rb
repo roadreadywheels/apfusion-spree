@@ -20,7 +20,7 @@ module SpreeApfusion
       @stock_item.id
       SpreeApfusion::StockItem.generate_stock_item_hash 
 
-      response = SpreeApfusion::OAuth.send(:PUT, '/api/v2/stock_locations/'+@stock_item.stock_location.apfusion_stock_location_id.to_s+'/stock_items/'+@stock_item.apfusion_stock_item_id.to_s+'.json', {stock_item: @stock_item_hash})
+      response = SpreeApfusion::OAuth.send(:PUT, '/api/v2/stock_locations/'+@stock_item.stock_location.apfusion_stock_location_id.to_s+'/stock_items/'+@stock_item.apfusion_stock_item_id.to_s+'.json', {stock_item: @stock_item_hash,filter_type: "id"})
     end
 
 
@@ -38,8 +38,6 @@ module SpreeApfusion
       @stock_item_hash["variant_id"] = @stock_item.variant.apfusion_variant_id
       @stock_item_hash["force"] = true
       @stock_item_hash["sku"] = @stock_item.variant.sku
-      @stock_item_hash["filter_type"] = "id"
-       
      
     end
 
