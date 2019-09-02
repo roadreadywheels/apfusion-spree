@@ -38,7 +38,11 @@ Spree::Product.class_eval do
 			Spree::Property.create_all_property
 			Spree::Product.all.each do |product|
 				product.product_properties.each do |product_property|
-					SpreeApfusion::ProductProperty.create(product_property)
+					if product_property.apfusion_product_property_id.present?
+						SpreeApfusion::ProductProperty.update(product_property)
+					else
+						SpreeApfusion::ProductProperty.create(product_property)
+					end	
 				end	
 			end	
 		end
@@ -70,7 +74,8 @@ Spree::Product.class_eval do
 					SpreeApfusion::Product.update(product)
 				else
 					SpreeApfusion::Product.create(product)
-				end	
+				end
+
 				product.stock_items.each do |stock_item|
 					if stock_item.apfusion_stock_item_id.present?
 						SpreeApfusion::StockItem.update(stock_item)
