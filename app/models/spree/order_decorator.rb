@@ -27,6 +27,8 @@
 				  order["bill_address"]["country_id"] = bill_country.id
 				  order["ship_address"]["state_id"] = ship_state_id
 				  order["ship_address"]["country_id"] = ship_country.id
+				  order["ship_address"]["phone"].present? ? order["ship_address"]["phone"] : order["ship_address"]["phone"] = "800-554-4770"
+				  order["bill_address"]["phone"].present? ? order["bill_address"]["phone"] :  order["bill_address"]["phone"] = "800-554-4770"
 				  order["bill_address"].delete('state')
 				  order["ship_address"].delete('state')
 				  order["bill_address"].delete('country')

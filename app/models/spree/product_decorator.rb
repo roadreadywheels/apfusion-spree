@@ -54,7 +54,7 @@ Spree::Product.class_eval do
 			# 		SpreeApfusion::ProductProperty.update_product(product_property)
 			# end	
 			product.images.each do |image|
-				SpreeApfusion::Image.update(image)
+				SpreeApfusion::Image.create(image)
 			end		
 			# product.stock_items.each do |stock_item|
 			# 	# if stock_item.apfusion_stock_item_id.present?
