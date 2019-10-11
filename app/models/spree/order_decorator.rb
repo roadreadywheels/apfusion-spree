@@ -38,7 +38,7 @@
 				 	p "================"*20
 				 	p orders_attributes = {'bill_address_attributes'=>bill_address,'ship_address_attributes'=>ship_address,'email'=>order['email'],'special_instructions'=>order['special_instructions'],'apfusion_order_id'=>order['id'],'apfusion_completed_at'=>order['completed_at']}
 				 	p "================"*20
-
+				 	order["line_items"].delete_if { |k| k.empty? }
 					order["line_items"].each do |line_item|
 						if line_item["variant"]["is_master"] == true
 							variant = Spree::Product.find(line_item["source_id"]).master
@@ -54,13 +54,13 @@
 					end
 
 
-
 					orders_attributes
 				 	@order.update_attributes(orders_attributes)
 					@order.next
 					@order.next
 					@order.shipments.destroy_all
 					@order.line_items.destroy_all
+					order["shipments"].delete_if { |k| k.empty? }
 					order["shipments"].each do |shipment|
 						shipping_method_name = shipment["shiping_method_name"]["linked_from"]
 						@shipping_method =  Spree::ShippingMethod.find_by_name(shipping_method_name)
