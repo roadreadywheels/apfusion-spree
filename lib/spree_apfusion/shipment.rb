@@ -19,7 +19,9 @@ module SpreeApfusion
 
     def self.generate_shipment_hash 
       @shipment_hash = @shipment.attributes
-      @shipment_hash["order_id"] = @shipment.order.apfusion_order_id
+      @shipment_hash["stock_location_id"] = @shipment.stock_location.apfusion_stock_location_id
+      @shipment_hash["number"] = @shipment.apfusion_shipment_id
+      @shipment_hash["order_id"] = @shipment.order.apfusion_order_id  
     end
 
   end
