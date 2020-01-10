@@ -48,8 +48,12 @@ Spree::Product.class_eval do
 		end
 
 		def self.update_one_product
-			product = Spree::Product.find(17)
-		 	SpreeApfusion::Product.update(product)
+			# product = Spree::Product.find(79)
+
+			
+
+			
+
 		 # # 	product.product_properties.each do |product_property|
 			# # 		SpreeApfusion::ProductProperty.update_product(product_property)
 			# # end	
@@ -65,6 +69,16 @@ Spree::Product.class_eval do
 			# end		
 		end
 
+		def self.create_product_to_apfusion_having_duplicate_ids
+			apfusion_product_ids = Spree::Product.group(:apfusion_product_id).having("count(apfusion_product_id) > 1").count.keys			
+			apfusion_product_ids.each do |apf_product_id|
+				ids = Spree::Product.where(apfusion_product_id: Spree::Product.group(:apfusion_product_id).having("count(apfusion_product_id) > 1").select(:apfusion_product_id)).where(apfusion_product_id: apf_product_id).collect(&:id)
+				Spree::Product.where(id: ids.tap(&:pop)).each do |product|
+		 			SpreeApfusion::Product.create(product)
+				end	
+
+			end
+		end
 
 
 		def self.update_product
