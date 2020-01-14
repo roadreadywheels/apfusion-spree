@@ -48,8 +48,12 @@ Spree::Product.class_eval do
 		end
 
 		def self.update_one_product
-			# product = Spree::Product.find(79)
+			product = Spree::Product.find(566)
 
+			SpreeApfusion::Product.create(product)		
+			product.stock_items.update_all(apfusion_stock_item_id: nil)
+			product.images.update_all(apfusion_image_id: nil)
+				
 			
 
 			
@@ -74,7 +78,23 @@ Spree::Product.class_eval do
 			apfusion_product_ids.each do |apf_product_id|
 				ids = Spree::Product.where(apfusion_product_id: Spree::Product.group(:apfusion_product_id).having("count(apfusion_product_id) > 1").select(:apfusion_product_id)).where(apfusion_product_id: apf_product_id).collect(&:id)
 				Spree::Product.where(id: ids.tap(&:pop)).each do |product|
-		 			SpreeApfusion::Product.create(product)
+		 			SpreeApfusion::Product.create(product)		
+					product.stock_items.update_all(apfusion_stock_item_id: nil)
+					product.images.update_all(apfusion_image_id: nil)
+				end	
+
+			end
+		end
+
+
+		def self.create_product_to_apfusion_having_duplicate_ids_ignore_first_element
+			apfusion_product_ids = Spree::Product.group(:apfusion_product_id).having("count(apfusion_product_id) > 1").count.keys			
+			apfusion_product_ids.each do |apf_product_id|
+				ids = Spree::Product.where(apfusion_product_id: Spree::Product.group(:apfusion_product_id).having("count(apfusion_product_id) > 1").select(:apfusion_product_id)).where(apfusion_product_id: apf_product_id).collect(&:id)
+				Spree::Product.where(id: ids.drop(1)).each do |product|
+		 			SpreeApfusion::Product.create(product)		
+					product.stock_items.update_all(apfusion_stock_item_id: nil)
+					product.images.update_all(apfusion_image_id: nil)
 				end	
 
 			end
