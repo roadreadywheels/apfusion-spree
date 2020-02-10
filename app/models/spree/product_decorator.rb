@@ -3,7 +3,7 @@ Spree::Product.class_eval do
 		# after_update :update_at_apfusion
 		# after_destroy :destroy_at_apfusion
 
-		validates :apfusion_product_id,:uniqueness => true
+		validates :apfusion_product_id,:uniqueness => true,if: 'apfusion_product_id.present?'
 
 		def create_at_apfusion
 			SpreeApfusion::Product.create(self)
