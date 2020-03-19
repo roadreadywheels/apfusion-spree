@@ -41,9 +41,9 @@
 					 	order["line_items"].delete_if { |k| k.empty? }
 						order["line_items"].each do |line_item|
 							if line_item["variant"]["is_master"] == true
-								variant = Spree::Product.find(line_item["source_id"]).master
+								variant = Spree::Product.find_by_apfusion_product_id(line_item["source_id"]).master
 							else			
-								variant = Spree::Variant.find(line_item["source_id"])
+								variant = Spree::Variant.find_by_apfusion_variant_id(line_item["source_id"])
 							end
 							begin
 							  quantity = line_item["quantity"]
@@ -75,9 +75,9 @@
 									if line_item["variant_id"] == menifest["variant_id"]
 										price = line_item["price"]
 										if line_item["variant"]["is_master"] == true
-											variant = Spree::Product.find(line_item["source_id"]).master
+											variant = Spree::Product.find_by_apfusion_product_id(line_item["source_id"]).master
 										else			
-											variant = Spree::Variant.find(line_item["source_id"])
+											variant = Spree::Variant.find_by_apfusion_variant_id(line_item["source_id"])
 										end
 										@order.contents.add(variant, quantity, {shipment: @shipment}, price)
 									
