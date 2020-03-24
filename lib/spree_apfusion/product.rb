@@ -32,6 +32,7 @@ module SpreeApfusion
       SpreeApfusion::Product.add_product_price
       SpreeApfusion::Product.add_option_type_id
       SpreeApfusion::Product.add_sku
+      SpreeApfusion::Product.add_taxons
 
     end
 
@@ -55,6 +56,9 @@ module SpreeApfusion
       @product_hash["sku"] = @product.sku
     end
 
+    def self.add_taxons
+       @product_hash["taxon_ids"] = "5"
+    end
 
 	end
 end
