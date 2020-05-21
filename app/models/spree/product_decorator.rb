@@ -49,7 +49,7 @@ Spree::Product.class_eval do
 		end
 
 		def self.update_one_product
-			product = Spree::Product.find(1003)
+			product = Spree::Product.find(994)
 			# product.stock_items.each do |stock_item|
 			# 	if stock_item.apfusion_stock_item_id.present?
 			# 		SpreeApfusion::StockItem.update(stock_item)
@@ -57,7 +57,7 @@ Spree::Product.class_eval do
 			# 	 	SpreeApfusion::StockItem.create(stock_item)
 			# 	end	
 			# end		
-			SpreeApfusion::Product.create(product)		
+			# SpreeApfusion::Product.update(product)		
 			# product.stock_items.update_all(apfusion_stock_item_id: nil)
 			# product.images.update_all(apfusion_image_id: nil)
 				
@@ -68,9 +68,9 @@ Spree::Product.class_eval do
 		 # # 	product.product_properties.each do |product_property|
 			# # 		SpreeApfusion::ProductProperty.update_product(product_property)
 			# # end	
-			# product.images.each do |image|
-			# 	SpreeApfusion::Image.create(image)
-			# end		
+			product.images.each do |image|
+				SpreeApfusion::Image.create(image)
+			end		
 			# product.stock_items.each do |stock_item|
 			# 	# if stock_item.apfusion_stock_item_id.present?
 			# 	# 		SpreeApfusion::StockItem.update(stock_item)

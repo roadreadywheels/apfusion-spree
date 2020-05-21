@@ -6,8 +6,15 @@ module SpreeApfusion
       @image.viewable.product.id
       @image_hash 
       SpreeApfusion::Image.generate_image_hash 
-      response = SpreeApfusion::OAuth.send(:post, '/api/v2/products/'+@image.viewable.product.apfusion_product_id.to_s+'/images.json', {image: @image_hash,filter_type: "id"})[:response]
-      @image.update_attributes(apfusion_image_id: response["id"]) 
+      begin
+        response = SpreeApfusion::OAuth.send(:post, '/api/v2/products/'+@image.viewable.product.apfusion_product_id.to_s+'/images.json', {image: @image_hash,filter_type: "id"})
+        if response[:success] == true && response[:response].present? && response[:response]["id"].present? 
+          @image.update_column :apfusion_image_id, response[:response]["id"]
+        end 
+        
+      rescue Exception => e
+        p e.message
+      end
     end
 
     def self.update image
