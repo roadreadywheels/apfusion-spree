@@ -36,7 +36,7 @@
 					 	p bill_address = order["bill_address"]
 					 	p ship_address = order["ship_address"]
 					 	p "================"*20
-					 	p orders_attributes = {'bill_address_attributes'=>bill_address,'ship_address_attributes'=>ship_address,'email'=>order['email'],'special_instructions'=>order['special_instructions'],'apfusion_order_id'=>order['id'],'apfusion_completed_at'=>order['completed_at'],'user_id' => order['rrw_user_id']}
+					 	p orders_attributes = {'bill_address_attributes'=>bill_address,'ship_address_attributes'=>ship_address,'email'=>order['user_email'],'special_instructions'=>order['special_instructions'],'apfusion_order_id'=>order['id'],'apfusion_completed_at'=>order['completed_at'],'user_id' => order['rrw_user_id']}
 					 	p "================"*20
 					 	order["line_items"].delete_if { |k| k.empty? }
 						order["line_items"].each do |line_item|
