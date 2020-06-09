@@ -50,24 +50,7 @@ Spree::Product.class_eval do
 
 		def self.update_one_product
 			product = Spree::Product.find(994)
-			# product.stock_items.each do |stock_item|
-			# 	if stock_item.apfusion_stock_item_id.present?
-			# 		SpreeApfusion::StockItem.update(stock_item)
-			# 	else
-			# 	 	SpreeApfusion::StockItem.create(stock_item)
-			# 	end	
-			# end		
-			# SpreeApfusion::Product.update(product)		
-			# product.stock_items.update_all(apfusion_stock_item_id: nil)
-			# product.images.update_all(apfusion_image_id: nil)
-				
-			
-
-			
-
-		 # # 	product.product_properties.each do |product_property|
-			# # 		SpreeApfusion::ProductProperty.update_product(product_property)
-			# # end	
+		
 			product.images.each do |image|
 				SpreeApfusion::Image.create(image)
 			end		
@@ -94,37 +77,30 @@ Spree::Product.class_eval do
 		end
 
 
-		def self.create_product_to_apfusion_having_duplicate_ids_ignore_first_element
-			apfusion_product_ids = Spree::Product.group(:apfusion_product_id).having("count(apfusion_product_id) > 1").count.keys			
-			apfusion_product_ids.each do |apf_product_id|
-				ids = Spree::Product.where(apfusion_product_id: Spree::Product.group(:apfusion_product_id).having("count(apfusion_product_id) > 1").select(:apfusion_product_id)).where(apfusion_product_id: apf_product_id).collect(&:id)
-				Spree::Product.where(id: ids.drop(1)).each do |product|
-		 			SpreeApfusion::Product.create(product)		
-					product.stock_items.update_all(apfusion_stock_item_id: nil)
-					product.images.update_all(apfusion_image_id: nil)
-				end	
 
-			end
-		end
 
 
 		def self.update_product
-			Spree::StockLocation.create_all_stock_locations
-			Spree::Product.all.each do |product|	
+
+			Spree::Price.where("updated_at >= ? and updated_at <= ?", Time.now - 1.5.hours, Time.now).each do |price|
+
+				product = price.variant.product
+
 				if product.apfusion_product_id.present?
 					SpreeApfusion::Product.update(product)
 				else
 					SpreeApfusion::Product.create(product)
 				end
-
-				product.stock_items.each do |stock_item|
-					if stock_item.apfusion_stock_item_id.present?
-						SpreeApfusion::StockItem.update(stock_item)
-					else
-						SpreeApfusion::StockItem.create(stock_item)
-					end	
-				end
 			end	
+
+
+			Spree::StockItem.where("updated_at >= ? and updated_at <= ? and count_on_hand <= ?", Time.now - 1.5.hours, Time.now,25).each do |stock_item|
+				if stock_item.apfusion_stock_item_id.present?
+						SpreeApfusion::StockItem.update(stock_item)
+				else
+						SpreeApfusion::StockItem.create(stock_item)
+				end					
+			end
 		end
 
 end
