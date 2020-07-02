@@ -103,6 +103,16 @@ Spree::Product.class_eval do
 			end
 		end
 
+		def self.update_stock_to_apf
+			Spree::StockItem.all.each do |stock_item|
+				if stock_item.apfusion_stock_item_id.present?
+						SpreeApfusion::StockItem.update(stock_item)
+				else
+						SpreeApfusion::StockItem.create(stock_item)
+				end		
+			end	
+		end
+
 end
 
 		
