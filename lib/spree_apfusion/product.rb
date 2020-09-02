@@ -44,7 +44,7 @@ module SpreeApfusion
         @product_hash["price"] = @product.price + (@product.price * 0.08)
       end
       @product_hash["resale_amount"] = @product.resale_amount
-      @product_hash["bsap_amount"] = @product.bsap_amount
+      @product_hash["bsap_amount"] = @product.bsap_amount + (@product.bsap_amount * 0.09)
 
     end
 

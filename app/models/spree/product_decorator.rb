@@ -49,12 +49,12 @@ Spree::Product.class_eval do
 		end
 
 		def self.update_one_product
-			product = Spree::Product.find(994)
-		
-			product.images.each do |image|
-				SpreeApfusion::Image.create(image)
-			end		
-			# product.stock_items.each do |stock_item|
+			product = Spree::Product.find(17)
+			SpreeApfusion::Product.update(product)
+			# product.images.each do |image|
+			# 	SpreeApfusion::Image.create(image)
+			# end		
+			# # product.stock_items.each do |stock_item|
 			# 	# if stock_item.apfusion_stock_item_id.present?
 			# 	# 		SpreeApfusion::StockItem.update(stock_item)
 			#  # 	else
