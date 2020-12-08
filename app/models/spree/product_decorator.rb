@@ -61,6 +61,9 @@ Spree::Product.class_eval do
 			#  			SpreeApfusion::StockItem.cr(stock_item)
 			#  	# end	
 			# end		
+			Spree::Product.all.each do |product|
+				SpreeApfusion::Product.update(product)
+			end	
 		end
 
 		def self.create_product_to_apfusion_having_duplicate_ids
