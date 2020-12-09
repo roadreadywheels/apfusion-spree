@@ -11,7 +11,7 @@ module SpreeApfusion
       # loop do
       #   orders = SpreeApfusion::OAuth.send(:GET, '/api/v2/orders', {page: page, q: {completed_at_gt: @order.apfusion_completed_at}})[:response]
       #   orders["orders"].each do |order|
-      ["R508043022","R542859243","R564280780","R159835206","R202395649"," R099439986"].each do |number|
+      ["R835428948"].each do |number|
         # binding.pry
         order_number = number
         order_details = SpreeApfusion::OAuth.send(:GET, "/api/v2/orders/#{order_number}", {})[:response]
