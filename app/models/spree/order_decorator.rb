@@ -5,7 +5,7 @@
 		response.each do |order|
 			p "response called"*8
 
-		 		begin
+		 		# begin
 		 			apf_order = Spree::Order.find_by_apfusion_order_id(order['id'])
 		 			unless apf_order.present?
 			 			@order = Spree::Order.new
@@ -45,12 +45,12 @@
 							else			
 								variant = Spree::Variant.find_by_apfusion_variant_id(line_item["source_id"])
 							end
-							begin
+							# begin
 							  quantity = line_item["quantity"]
 								@order.contents.add(variant, quantity, {}, line_item["price"])
-							rescue ActiveRecord::ReproductscordInvalid => e
-								error = e.record.errors.full_messages.join(', ')
-							end	
+							# rescue ActiveRecord::ReproductscordInvalid => e
+							# 	error = e.record.errors.full_messages.join(', ')
+							# end	
 						end
 
 
@@ -134,9 +134,9 @@
 						@order.next
 					end	
 
-		 		rescue Exception => e
-		 			p e.message
-		 		end
+		 		# rescue Exception => e
+		 		# 	p e.message
+		 		# end
 		 	
 		end 	
 	end
