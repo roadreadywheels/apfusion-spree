@@ -2,10 +2,15 @@ module SpreeApfusion
 	class OAuth
 
 		def self.init
-			# @url = 'https://www.apfusion_auth.com'
-			 	  # @url = 'http://localhost:3000/'
-			   @url = 'http://34.217.121.110/'
-			@grant_type = 'client_credentials'
+			# @url = 'http://apfusion.com/'
+			# 
+			urls = {
+				"development" => "http://localhost:3000/",
+				"staging" => "http://34.217.121.110/",
+				"production" => "https://apfusion.com/"
+			}
+		 	 	@url = urls[Rails.env]
+				@grant_type = 'client_credentials'
 
 			begin
 				@apfusion_auth_config = YAML.load_file(Rails.root.to_s + '/config/apfusion_auth_config.yml')[Rails.env]
@@ -22,7 +27,7 @@ module SpreeApfusion
 			# @apfusion_auth_config = YAML.load_file('/Users/afzal/rails/gems/spree_apfusion/config/apfusion_auth_config.yml')[Rails.env]
 			@public_key = @apfusion_auth_config['public_key']
 			@secret_key = @apfusion_auth_config['secret_key']
-			@access_token = ApfusionToken.first.try(:token)
+			@access_token = ApfusionToken.first.try(:token) || ''
 		end
 
 		def self.get_access_token
@@ -64,41 +69,45 @@ module SpreeApfusion
 			{status: 'Authorized!', access_token: @access_token}
 		end
 
-		def self.send (method, url_path, data)
+		def self.send (method, url_path	, data)
 			p '========================'
 			p "Method: #{method}"
 			p "Url: #{url_path}"
 			p "Params: #{data}"
 			p '========================'
 			SpreeApfusion::OAuth.authorize
-
+			p "after authorize called"
 			request = RestClient::Request.new(
 				method: method,
 				url: @url+url_path+'?access_token='+@access_token,
 				headers: {params: data}
 			)
-
+			begin
 			response = request.execute {|response| $results = response}
 
 			response.body
-
-			begin
+			
 				response_body = JSON.parse(response.body)
 			rescue
 				response_body = ''
 			end
 
-			case response.code.to_s
+			begin
+				
+				case response.code.to_s
 
-				when /^20/
-					p '123'
-					return {success: true, response: response_body, response_code: response.code}
-				when '401'
-					p '!!!!Invalid Access Token!!!!'
-					ApfusionToken.destroy_all
-					SpreeApfusion::OAuth.send(method, url_path, data)
-				else
-					return {success: false, response: response_body, response_code: response.code}
+					when /^20/
+						p 'SYNC Successfully'
+						return {success: true, response: response_body, response_code: response.code}
+					when '401'
+						p '!!!!Invalid Access Token!!!!'
+						ApfusionToken.destroy_all
+						SpreeApfusion::OAuth.send(method, url_path, data)
+					else
+						return {success: false, response: response_body, response_code: response.code}
+				end
+			rescue Exception => e
+				p e.message
 			end
 			# p 1
 			# SpreeApfusion::OAuth.authorize

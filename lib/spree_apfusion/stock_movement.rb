@@ -4,9 +4,7 @@ module SpreeApfusion
     def self.create stock_movement
       @stock_movement = stock_movement
       @stock_movement_hash 
-
-      p "======StockMovement CREATE CALL======"
-      p @stock_movement.stock_item.stock_location_id
+      @stock_movement.stock_item.stock_location_id
       SpreeApfusion::StockMovement.generate_stock_movement_hash 
       SpreeApfusion::OAuth.send(:post, '/api/v2/stock_locations/'+@stock_movement.stock_item.stock_location_id.to_s+'/stock_movements.json', {stock_movement: @stock_movement_hash})
     end
@@ -24,9 +22,7 @@ module SpreeApfusion
 
     def self.check_variant_is_master 
       if @stock_movement.stock_item.variant.is_master == true
-        p "check_variant_is_master================"*2
-        p  @stock_movement_hash["product_id"] = @stock_movement.stock_item.variant.product_id
-        p "================================================="
+        @stock_movement_hash["product_id"] = @stock_movement.stock_item.variant.product_id
       end  
     end
 

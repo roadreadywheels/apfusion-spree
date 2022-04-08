@@ -1,33 +1,30 @@
 Spree::StockItem.class_eval do
-		after_create :create_at_apfusion
-	  # after_update :update_at_apfusion
-		after_destroy :destroy_at_apfusion
+	# after_create :create_at_apfusion
+ #  after_update :update_at_apfusion
+	# after_destroy :destroy_at_apfusion
+
+
 	def create_at_apfusion
-		p 'SYNC APFUSION after create 	stock item create called '
-		p '.'*50
-		p self.as_json
-		 	SpreeApfusion::StockItem.create(self)
-		# p SpreeApfusion::Image.create()
-		p '.'*50
+		begin
+			
+			SpreeApfusion::StockItem.create(self)
+		rescue 
+			
+		end
 	end
 
-	def update_at_apfusion
-			p 'UPDate StockItem sotck item  update clald'
-			p '.'*50
-			p self.as_json
 
+	def update_at_apfusion
+		begin
 			SpreeApfusion::StockItem.update(self)
-			# p SpreeApfusion::Image.create()
-			p '.'*50
+			
+		rescue 
+			
+		end
 	end
 
 	def destroy_at_apfusion
-			p 'SYNC APFUSION'
-			p '.'*50
-			p self.as_json
-			p SpreeApfusion::StockItem.destroy(self)
-			# p SpreeApfusion::Image.create()
-			p '.'*50
+		SpreeApfusion::StockItem.destroy(self)
 	end
 
 end

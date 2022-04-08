@@ -9,17 +9,14 @@ module SpreeApfusion
 
     def self.update zone
       @zone = zone
-
-      p "========UPDate call====="
-      p @zone.id
+      @zone.id
       SpreeApfusion::Zone.generate_zone_hash 
       SpreeApfusion::OAuth.send(:PUT, '/api/v2/zones/'+@zone.id.to_s+'.json', {zone: @zone_hash})
     end
 
     def self.destroy zone
       @zone = zone
-      p "========Delete call====="
-      p @zone.id
+      @zone.id
       SpreeApfusion::Zone.generate_zone_hash
       SpreeApfusion::OAuth.send(:DELETE , '/api/v2/zones/'+@zone.id.to_s+'.json', {zone: @zone_hash})
     end
