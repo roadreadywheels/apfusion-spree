@@ -3,9 +3,7 @@ module SpreeApfusion
 
     def self.get_orders(options = {})
       @order = Spree::Order.where.not(apfusion_order_id: nil).order(:created_at).last
-      if @order.present?
-        @order_id = @order.apfusion_order_id
-      end 
+      @order_id = @order.apfusion_order_id if @order.present?
       @orders = []
       page = options[:page] || 1
       per_page = options[:per_page] || 10
