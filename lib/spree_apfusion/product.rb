@@ -38,8 +38,8 @@ module SpreeApfusion
 
 
     def self.add_product_price 
-      if @product.resale_amount.present?
-        @product_hash["price"] = @product.resale_amount + (@product.resale_amount * 0.08)
+      if @product.apfusion_amount.present?
+        @product_hash["price"] = @product.apfusion_amount
       else
         @product_hash["price"] = @product.price + (@product.price * 0.08)
       end
