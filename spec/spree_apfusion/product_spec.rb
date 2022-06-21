@@ -29,12 +29,14 @@ RSpec.describe SpreeApfusion::Product do
     end
 
     context 'when apfusion_price_level is empty or less than or equal 0' do
-      it 'should return a hash with product attributes with correct apfusion price' do
-        product.master.prices.update_all(amount: 10.00, apfusion_price_level: 0)
+      it 'should return product attributes hash with resale price value(resale_amount + resale_amount * 0.08)' do
+        product.master.prices.update_all(amount: 10.00, resale_amount: 150, apfusion_price_level: 0)
         product_hash = described_class.generate_product_hash(product)
         expect(product_hash).to be_kind_of Hash
-        expect(product_hash['price'].to_f).to eq (10.8)
+        expect(product_hash['price'].to_f).to eq (162.0)
+      end
 
+      it 'should return product attributes hash with retail price value(retail + retail * 0.08)' do
         product.master.prices.update_all(amount: 10.00, apfusion_price_level: nil)
         product_hash = described_class.generate_product_hash(product)
         expect(product_hash).to be_kind_of Hash
