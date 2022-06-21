@@ -10,7 +10,6 @@ module SpreeApfusion
       end   
   	end
 
-
     def self.update product
       return if product.blank?
 
@@ -33,18 +32,19 @@ module SpreeApfusion
       SpreeApfusion::Product.add_option_type_id(product)
       SpreeApfusion::Product.add_sku(product)
       SpreeApfusion::Product.add_taxons(product)
+      SpreeApfusion::Product.add_hollander_number(product)
       @product_hash
     end
 
-
     def self.add_product_price product
-      if product.apfusion_amount.present? && product.apfusion_amount.to_i > 0
+      if product.apfusion_amount.to_i > 0
         @product_hash["price"] = product.apfusion_amount
       else
         @product_hash["price"] = product.price + (product.price * 0.08)
       end
       @product_hash["resale_amount"] = product.resale_amount
       @product_hash["bsap_amount"] = product.bsap_amount + (product.bsap_amount * 0.09)
+      @product_hash
     end
 
     def self.add_option_type_id product
@@ -57,6 +57,23 @@ module SpreeApfusion
 
     def self.add_taxons product
        @product_hash["taxon_ids"] = "5"
+    end
+
+    def self.add_hollander_number product      
+      @product_hash["hollander_number"] = if hollander_number(product).present?
+                                          product.get_sku(Spree::Property.get_id_by_name('hollander_number'))
+                                        else
+                                          product.get_sku(Spree::Property.get_id_by_name('rr_sku'))
+                                        end
+    end
+
+    private
+    
+    def self.hollander_number product
+      Spree::Property.get_by_name('hollander_number')
+                     .product_properties
+                     .where(product_id: product.id)
+                     .first.value rescue nil
     end
 
 	end
