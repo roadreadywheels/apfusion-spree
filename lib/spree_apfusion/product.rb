@@ -37,11 +37,13 @@ module SpreeApfusion
     end
 
     def self.add_product_price product
-      if product.apfusion_amount.to_i > 0
-        @product_hash["price"] = product.apfusion_amount
-      else
-        @product_hash["price"] = product.price + (product.price * 0.08)
-      end
+      @product_hash["price"] =  if product.apfusion_amount.to_i > 0
+                                  product.apfusion_amount
+                                elsif product.resale_amount.to_i > 0
+                                  calculate_price(product.resale_amount)
+                                else
+                                  calculate_price(product.price)
+                                end
       @product_hash["resale_amount"] = product.resale_amount
       @product_hash["bsap_amount"] = product.bsap_amount + (product.bsap_amount * 0.09)
       @product_hash
@@ -59,7 +61,7 @@ module SpreeApfusion
        @product_hash["taxon_ids"] = "5"
     end
 
-    def self.add_hollander_number product      
+    def self.add_hollander_number product
       @product_hash["hollander_number"] = if hollander_number(product).present?
                                           product.get_sku(Spree::Property.get_id_by_name('hollander_number'))
                                         else
@@ -68,6 +70,10 @@ module SpreeApfusion
     end
 
     private
+
+    def self.calculate_price price
+      price + (price * 0.08)
+    end
     
     def self.hollander_number product
       Spree::Property.get_by_name('hollander_number')
