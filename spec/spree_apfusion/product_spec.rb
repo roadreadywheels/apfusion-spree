@@ -35,7 +35,7 @@ RSpec.describe SpreeApfusion::Product do
         expect(product_hash).to be_kind_of Hash
         expect(product_hash['price'].to_f).to eq (10.8)
 
-         product.master.prices.update_all(amount: 10.00, apfusion_price_level: nil)
+        product.master.prices.update_all(amount: 10.00, apfusion_price_level: nil)
         product_hash = described_class.generate_product_hash(product)
         expect(product_hash).to be_kind_of Hash
         expect(product_hash['price'].to_f).to eq (10.8)
@@ -135,6 +135,16 @@ RSpec.describe SpreeApfusion::Product do
       expect(described_class.add_hollander_number(product)).to eq('560-23232')
     end
 
+  end
+
+  describe '.calculate_price' do
+    it 'should accept a :price as am argument' do
+      allow(described_class).to receive(:calculate_price).with(200)
+    end
+
+    it 'should return the calculated price value price + 0.08' do
+      expect(described_class.send(:calculate_price, 100)).to eq(108)
+    end
   end
 
   describe '.hollander_number' do
