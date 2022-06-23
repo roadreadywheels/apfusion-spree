@@ -62,11 +62,7 @@ module SpreeApfusion
     end
 
     def self.add_hollander_number product
-      @product_hash["hollander_number"] = if hollander_number(product).present?
-                                          product.get_sku(Spree::Property.get_id_by_name('hollander_number'))
-                                        else
-                                          product.get_sku(Spree::Property.get_id_by_name('rr_sku'))
-                                        end
+      @product_hash["hollander_number"] = product.get_sku(Spree::Property.get_id_by_name('rr_sku'))
     end
 
     private

@@ -5,7 +5,7 @@ module SpreeApfusion
 			# @url = 'http://apfusion.com/'
 			# 
 			urls = {
-				"development" => "http://localhost:3000",
+				"development" => "https://staging.apfusion.com",
 				"staging" => "https://staging.apfusion.com",
 				"production" => "https://apfusion.com/"
 			}
