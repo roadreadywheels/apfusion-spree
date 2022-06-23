@@ -122,11 +122,10 @@ RSpec.describe SpreeApfusion::Product do
       allow(described_class).to receive(:add_hollander_number).with(product)
     end
 
-    it "Should return hollander number when exist" do
+    it "Should return rr SKU even when hollander number when exist" do
       described_class.generate_product_hash(product)
       product_hash = described_class.add_hollander_number(product)
-      expect(described_class.add_hollander_number(product)).to eq('560-01234')
-      expect(described_class.add_hollander_number(product)).to_not eq '560-01235'
+      expect(described_class.add_hollander_number(product)).to eq '560-23232'
     end
 
     it "Should return rr SKU when hallander number doesn't exist" do
