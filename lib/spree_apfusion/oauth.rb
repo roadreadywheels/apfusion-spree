@@ -5,8 +5,8 @@ module SpreeApfusion
 			# @url = 'http://apfusion.com/'
 			# 
 			urls = {
-				"development" => "http://localhost:3000/",
-				"staging" => "http://34.217.121.110/",
+				"development" => "https://staging.apfusion.com",
+				"staging" => "https://staging.apfusion.com",
 				"production" => "https://apfusion.com/"
 			}
 		 	 	@url = urls[Rails.env]
@@ -72,7 +72,7 @@ module SpreeApfusion
 		def self.send (method, url_path	, data)
 			p '========================'
 			p "Method: #{method}"
-			p "Url: #{url_path}"
+			p "Url: #{@url}/#{url_path}"
 			p "Params: #{data}"
 			p '========================'
 			SpreeApfusion::OAuth.authorize
