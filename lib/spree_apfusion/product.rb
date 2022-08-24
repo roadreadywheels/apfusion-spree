@@ -32,7 +32,6 @@ module SpreeApfusion
       SpreeApfusion::Product.add_option_type_id(product)
       SpreeApfusion::Product.add_sku(product)
       SpreeApfusion::Product.add_taxons(product)
-      SpreeApfusion::Product.add_hollander_number(product)
       @product_hash
     end
 
@@ -61,21 +60,10 @@ module SpreeApfusion
        @product_hash["taxon_ids"] = "5"
     end
 
-    def self.add_hollander_number product
-      @product_hash["hollander_number"] = product.get_sku(Spree::Property.get_id_by_name('rr_sku'))
-    end
-
     private
 
     def self.calculate_price price
       price + (price * 0.08)
-    end
-    
-    def self.hollander_number product
-      Spree::Property.get_by_name('hollander_number')
-                     .product_properties
-                     .where(product_id: product.id)
-                     .first.value rescue nil
     end
 
 	end
