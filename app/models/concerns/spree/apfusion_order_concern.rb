@@ -60,12 +60,23 @@ module Spree
     end
 
     def apfusion_update_addresses order
+      set_address_state(order)
       self.temporary_address = true
       orders_attributes = {
         'bill_address_attributes' => apfusion_set_address(order['bill_address']),
         'ship_address_attributes' => apfusion_set_address(order['ship_address'])
       }
       update(orders_attributes)
+      self.next
+      line_items.destroy_all
+      shipments.destroy_all
+    end
+
+    def set_address_state order
+      order['line_items'].delete_if { |k| k.empty? }
+      order['line_items'].each do |line_item|
+        set_line_item(line_item: line_item, quantity: line_item['quantity'])
+      end
       self.next
     end
 
@@ -82,14 +93,18 @@ module Spree
         shipment['manifest'].each do |manifest|
           line_items.each do |line_item|
             if line_item['variant_id'] == manifest['variant_id']
-              variant = line_item['variant']['is_master'] ?
-                        Spree::Product.find_by_apfusion_product_id(line_item['source_id']).master :
-                        Spree::Variant.find_by_apfusion_variant_id(line_item['source_id'])
-              self.contents.add(variant, manifest['quantity'], {shipment: shipment_record}, (line_item['price'] || 0))
+              set_line_item(line_item: line_item, shipment_condition: { shipment: shipment_record }, quantity: manifest['quantity'])
             end
           end
         end
       end
+    end
+
+    def set_line_item line_item:, shipment_condition: {}, quantity:
+      variant = line_item['variant']['is_master'] ?
+                Spree::Product.find_by_apfusion_product_id(line_item['source_id']).master :
+                Spree::Variant.find_by_apfusion_variant_id(line_item['source_id'])
+      self.contents.add(variant, quantity, shipment_condition, (line_item['price'] || 0))
     end
 
     def apfusion_create_shipments shipment
