@@ -23,6 +23,13 @@ Spree::Product.class_eval do
     calculate_price(price)
   end
 
+  # formula changes for BSAP/Baabs/Part Synergy Customers on 14-sept-22
+  # OLD: bsap_amount + (bsap_amount * 0.09)
+  #
+  def apf_bsap_price
+    (bsap_amount.to_f / 0.92).round(2)
+  end
+
 	def self.create_all_products
 		Spree::StockLocation.create_all_stock_locations	
 		Spree::Property.create_all_property

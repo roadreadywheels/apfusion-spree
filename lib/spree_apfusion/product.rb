@@ -38,7 +38,7 @@ module SpreeApfusion
     def self.add_product_price product
       @product_hash["price"] =  product.apf_price
       @product_hash["resale_amount"] = product.resale_amount
-      @product_hash["bsap_amount"] = product.bsap_amount + (product.bsap_amount * 0.09)
+      @product_hash["bsap_amount"] = product.apf_bsap_price
       @product_hash
     end
 
