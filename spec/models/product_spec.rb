@@ -57,5 +57,32 @@ RSpec.describe Spree::Product, type: :model do
         end
       end
     end
+
+    describe '#apf_bsap_price' do
+      it 'Should have apf_bsap_price method' do
+        allow(product).to receive(:apf_bsap_price).with(200)
+      end
+
+      context 'When bsap_amount is not empty and greater than 0' do
+        it 'Should return apf bsap price' do
+          product.master.prices.update_all(amount: 10.00, bsap_amount: 100.00)
+          expect(product.apf_bsap_price).to eq(108.70)
+        end
+      end
+
+      context 'When bsap_amount is not entered then it should calculate on amount field' do
+        it 'Should return resale price' do
+          product.master.prices.update_all(amount: 10.00, resale_amount: 170.00)
+          expect(product.apf_bsap_price).to eq(10.87)
+        end
+      end
+
+      context 'When bsap_amount is nil' do
+        it 'Should return resale price' do
+          product.master.prices.update_all(amount: 10.00, resale_amount: 170.00, bsap_amount: 0)
+          expect(product.apf_bsap_price).to eq(10.87)
+        end
+      end
+    end
   end
 end
