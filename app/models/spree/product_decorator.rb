@@ -3,7 +3,7 @@ Spree::Product.class_eval do
 	# after_update :update_at_apfusion
 	# after_destroy :destroy_at_apfusion
 
-	validates :apfusion_product_id,:uniqueness => true,:on => :update,if: 'apfusion_product_id.present?'	
+  validates :apfusion_product_id, :uniqueness => true, :on => :update, if: :apfusion_product_id?
 
 	def create_at_apfusion
 		SpreeApfusion::Product.create(self)
@@ -16,6 +16,10 @@ Spree::Product.class_eval do
 	def destroy_at_apfusion
 		SpreeApfusion::Product.destroy(self)
 	end
+
+  def apfusion_product_id?
+    apfusion_product_id.present?
+  end
 
   def apf_price
     return apfusion_amount if apfusion_amount.to_i > 0
