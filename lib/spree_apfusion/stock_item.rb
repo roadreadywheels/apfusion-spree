@@ -3,6 +3,10 @@ module SpreeApfusion
 
     def self.create stock_item
       @stock_item = stock_item
+      if @stock_item.stock_location.apfusion_stock_location_id.nil?
+        p "#{@stock_item.stock_location.name} is missing APF stock location ID. Could not get created/synced to APF."
+        return
+      end
       @stock_item_hash 
       SpreeApfusion::StockItem.generate_stock_item_hash 
       response = SpreeApfusion::OAuth.send(:post, '/api/v2/stock_locations/'+@stock_item.stock_location.apfusion_stock_location_id.to_s+'/stock_items.json', {stock_item: @stock_item_hash})
