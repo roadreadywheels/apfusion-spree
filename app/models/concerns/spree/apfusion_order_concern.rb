@@ -30,7 +30,7 @@ module Spree
         @order = Spree::Order.new
         orders_attributes = {
           'email' => order['user_email'],
-          'special_instructions' => order['special_instructions'],
+          'special_instructions' => (order['special_instructions'] || "APF: #{order['number']}"),
           'apfusion_order_id' => order['id'],
           'apfusion_completed_at' => order['completed_at'],
           'user_id' => order['rrw_user_id']
