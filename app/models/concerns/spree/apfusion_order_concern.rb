@@ -27,16 +27,17 @@ module Spree
 
     def self.create_apfusion_order order
       begin
-        @order = Spree::Order.new
+        self.initialize_values
         orders_attributes = {
+          'number' => "APF-#{order['number']}",
           'email' => order['user_email'],
           'special_instructions' => (order['special_instructions'] || "APF: #{order['number']}"),
           'apfusion_order_id' => order['id'],
           'apfusion_completed_at' => order['completed_at'],
-          'user_id' => order['rrw_user_id']
+          'user_id' => (@primary_user.try(:id) || order['rrw_user_id'])
         }
         @order.update(orders_attributes)
-        @order.set_methods(order)
+        @order.set_methods(order, @primary_user)
         return @order
       rescue Exception => e
         self.send_exception(e, order)
@@ -44,8 +45,8 @@ module Spree
       end
     end
 
-    def set_methods order
-      apfusion_update_addresses(order)
+    def set_methods order, primary_user
+      apfusion_update_addresses(order, primary_user)
       apfusion_set_line_item_shipments(order)
       apfusion_create_payment
       adjustments.destroy_all
@@ -59,11 +60,11 @@ module Spree
       self.next
     end
 
-    def apfusion_update_addresses order
+    def apfusion_update_addresses order, primary_user
       set_address_state(order)
       self.temporary_address = true
       orders_attributes = {
-        'bill_address_attributes' => apfusion_set_address(order['bill_address']),
+        'bill_address_attributes' => apfusion_set_bill_address(order['bill_address'], primary_user),
         'ship_address_attributes' => apfusion_set_address(order['ship_address'])
       }
       update(orders_attributes)
@@ -132,6 +133,26 @@ module Spree
       return address
     end
 
+    def apfusion_set_bill_address address, primary_user
+      return apfusion_set_address(address) if primary_user.nil?
+
+      bill_address_val = primary_user.bill_address
+
+      address['firstname'] = bill_address_val.firstname
+      address['lastname'] = bill_address_val.lastname
+      address['address1'] = bill_address_val.address1
+      address['address2'] = bill_address_val.address2
+      address['city'] = bill_address_val.city
+      address['zipcode'] = bill_address_val.zipcode
+      address['company'] = bill_address_val.company
+      address['country_id'] = bill_address_val.country_id
+      address['state_id'] = bill_address_val.state_id
+      address['phone'] = bill_address_val.phone
+
+      apfusion_delete_fields(address)
+      return address
+    end
+
     def apfusion_get_address address, allow_override = true
       return apfusion_set_address(address) if allow_override
 
@@ -173,6 +194,11 @@ module Spree
         type: 'apfusion_orders_sync'
       }
       Spree::UserMailer.error_email(err_data).deliver!
+    end
+
+    def self.initialize_values
+      @order = Spree::Order.new
+      @primary_user = Spree::User.find_by_email('help@apfusion.com')
     end
   end
 end
