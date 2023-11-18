@@ -137,6 +137,7 @@ module Spree
       return apfusion_set_address(address) if primary_user.nil?
 
       bill_address_val = primary_user.bill_address
+      address ||= {}
 
       address['firstname'] = bill_address_val.firstname
       address['lastname'] = bill_address_val.lastname
