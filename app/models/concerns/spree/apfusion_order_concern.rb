@@ -199,7 +199,9 @@ module Spree
 
     def self.initialize_values
       @order = Spree::Order.new
-      @primary_user = Spree::User.find_by_email('help@apfusion.com')
+
+      @primary_user = nil
+      # @primary_user = Spree::User.find_by_email('help@apfusion.com')
     end
   end
 end
