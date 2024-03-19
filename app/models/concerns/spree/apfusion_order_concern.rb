@@ -109,7 +109,7 @@ module Spree
     end
 
     def apfusion_create_shipments shipment
-      shipping_method_name = (shipment['shiping_method_name']['linked_from'] rescue 'Ground Shipping (FREE)')
+      shipping_method_name = (shipment['shiping_method_name']['linked_from'] rescue 'Ground Shipping (FREE)') || 'Ground Shipping (FREE)'
       shipping_method = Spree::ShippingMethod.find_by_name(shipping_method_name)
       stock_location = Spree::StockLocation.find_by_name(shipment['stock_location_name'])
       shipment_record = self.shipments.create(stock_location_id: stock_location.id, apfusion_shipment_id: shipment['number'])
