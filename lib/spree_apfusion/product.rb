@@ -39,6 +39,10 @@ module SpreeApfusion
       @product_hash["price"] =  product.apf_price
       @product_hash["resale_amount"] = product.resale_amount
       @product_hash["bsap_amount"] = product.apf_bsap_price
+
+      oe_number = product.oe_number.to_s
+      @product_hash["oem_number"] = oe_number.gsub("|", ",") if oe_number != 'N/A'
+
       @product_hash
     end
 
