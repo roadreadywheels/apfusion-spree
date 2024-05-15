@@ -1,11 +1,15 @@
 module SpreeApfusion
   class Product
 
+    def self.fetch ids
+      SpreeApfusion::OAuth.send(:get, "/api/v2/products.json", { ids: ids })
+    end
+
     def self.create product
       product_hash = SpreeApfusion::Product.generate_product_hash(product)
       response = SpreeApfusion::OAuth.send(:post, '/api/v2/products.json', {product: product_hash})
       if response[:success] == true && response[:response].present? && response[:response]["id"].present?                
-        product.update_attributes(apfusion_product_id: response[:response]["id"])
+        product.update_attributes(apfusion_product_id: response[:response]["id"], last_sync_to_apf_at: Time.current)
         product.master.update_attributes(apfusion_variant_id: response[:response]["master"]["id"])
       end   
     end
@@ -14,7 +18,11 @@ module SpreeApfusion
       return if product.blank?
 
       product_hash = SpreeApfusion::Product.generate_product_hash(product)
-      response = SpreeApfusion::OAuth.send(:PUT, '/api/v2/products/'+product.apfusion_product_id.to_s+'.json', {product: product_hash,filter_type: "id"}) 
+      response = SpreeApfusion::OAuth.send(:PUT, '/api/v2/products/'+product.apfusion_product_id.to_s+'.json', {product: product_hash,filter_type: "id"})
+      if response[:success] == true
+        product.update_attributes(last_sync_to_apf_at: Time.current)
+      end
+      response
     end  
 
     def self.destroy product
@@ -58,5 +66,31 @@ module SpreeApfusion
        @product_hash["taxon_ids"] = "5"
     end    
 
+    def self.compared_rrw_items_with_apfs
+      @unmatched_row = []
+
+      Spree::Product.where.not(apfusion_product_id: nil).find_in_batches(batch_size: 100) do |group|
+        apfusion_product_ids = group.pluck(:apfusion_product_id).join(',')
+
+        response = SpreeApfusion::Product.fetch(apfusion_product_ids)
+
+        if response[:success] == true && response[:response]['products'].present?
+          response[:response]["products"].each do |product|
+            rrw_element = Spree::Product.find_by_apfusion_product_id(product['id'])
+            next if rrw_element.nil?
+
+            if product['name'] != rrw_element.name
+              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], 'NAME', rrw_element.name]
+            elsif product['master']['sku'] != rrw_element.sku
+              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], 'SKU', rrw_element.sku]
+            elsif product['meta_description'] != rrw_element.meta_description
+              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], 'META_DESCRIPTION', rrw_element.meta_description]
+            end
+          end
+        end
+      end
+
+      @unmatched_row
+    end
   end
 end

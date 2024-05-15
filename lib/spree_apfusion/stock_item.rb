@@ -15,7 +15,7 @@ module SpreeApfusion
            @stock_item.update_attributes(apfusion_stock_item_id: response[:response]["id"])
         elsif response[:response].is_a?(Array)
           @stock_item.update_attributes(apfusion_stock_item_id: response[:response][0]["id"])
-        end 
+        end
       end
     end
 
@@ -25,6 +25,12 @@ module SpreeApfusion
       SpreeApfusion::StockItem.generate_stock_item_hash 
 
       response = SpreeApfusion::OAuth.send(:PUT, '/api/v2/stock_locations/'+@stock_item.stock_location.apfusion_stock_location_id.to_s+'/stock_items/'+@stock_item.apfusion_stock_item_id.to_s+'.json', {stock_item: @stock_item_hash,filter_type: "id"})
+
+      if response[:success] == true
+        @stock_item.product.update_attributes(last_sync_to_apf_at: Time.current)
+      end
+
+      response
     end
 
 
