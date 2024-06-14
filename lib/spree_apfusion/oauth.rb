@@ -54,6 +54,7 @@ module SpreeApfusion
       begin
         response = request.execute {|response| $results = response}
         response_body = JSON.parse(response.body) if response.present?
+
         case response.code.to_s
         when /^20/
           p 'SYNC Successfully'
