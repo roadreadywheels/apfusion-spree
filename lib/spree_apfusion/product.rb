@@ -80,11 +80,13 @@ module SpreeApfusion
             next if rrw_element.nil?
 
             if product['name'] != rrw_element.name
-              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], 'NAME', rrw_element.name]
+              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], 'NAME', rrw_element.name]
             elsif product['master']['sku'] != rrw_element.sku
-              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], 'SKU', rrw_element.sku]
+              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], 'SKU', rrw_element.sku]
             elsif product['meta_description'] != rrw_element.meta_description
-              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], 'META_DESCRIPTION', rrw_element.meta_description]
+              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], 'META_DESCRIPTION', rrw_element.meta_description]
+            elsif product['total_on_hand'] != rrw_element.total_on_hand
+              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], 'STOCKS', rrw_element.total_on_hand]
             end
           end
         end
