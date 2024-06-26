@@ -13,6 +13,8 @@ module SpreeApfusion
       if response[:success] == true && response[:response].present? 
         if response[:response].is_a?(Hash) && response[:response]["id"].present?                
            @stock_item.update_attributes(apfusion_stock_item_id: response[:response]["id"])
+        elsif response[:response].is_a?(Hash) && response[:response]["errors"].present?
+          @stock_item.update_column('apfusion_response', response[:response]["errors"])
         elsif response[:response].is_a?(Array)
           @stock_item.update_attributes(apfusion_stock_item_id: response[:response][0]["id"])
         end
@@ -26,8 +28,17 @@ module SpreeApfusion
 
       response = SpreeApfusion::OAuth.send(:PUT, '/api/v2/stock_locations/'+@stock_item.stock_location.apfusion_stock_location_id.to_s+'/stock_items/'+@stock_item.apfusion_stock_item_id.to_s+'.json', {stock_item: @stock_item_hash,filter_type: "id"})
 
-      if response[:success] == true
-        @stock_item.product.update_attributes(last_sync_to_apf_at: Time.current)
+      if response.is_a?(String)
+        @stock_item.update_column('apfusion_response', response)
+      elsif response[:success] == true
+        if response[:response].present? && response[:response]["errors"].present?
+          @stock_item.update_column('apfusion_response', response[:response]["errors"].to_s)
+        else
+          @stock_item.product.update_attributes(last_sync_to_apf_at: Time.current)
+          @stock_item.update_column('apfusion_response', nil)
+        end
+      else
+        @stock_item.update_column('apfusion_response', response.to_s)
       end
 
       response

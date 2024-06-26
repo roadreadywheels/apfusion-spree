@@ -2,7 +2,7 @@ module SpreeApfusion
   class Product
 
     def self.fetch ids
-      SpreeApfusion::OAuth.send(:get, "/api/v2/products.json", { ids: ids })
+      SpreeApfusion::OAuth.send(:get, "/api/v2/products.json", { ids: ids, per_page: 100 })
     end
 
     def self.create product
@@ -11,6 +11,10 @@ module SpreeApfusion
       if response[:success] == true && response[:response].present? && response[:response]["id"].present?                
         product.update_attributes(apfusion_product_id: response[:response]["id"], last_sync_to_apf_at: Time.current)
         product.master.update_attributes(apfusion_variant_id: response[:response]["master"]["id"])
+      elsif response[:success] == true && response[:response].present? && response[:response]["errors"].present?                
+        product.update_column('apfusion_response', response[:response]["errors"].to_s)
+      else
+        product.update_column('apfusion_response', response.to_s)
       end   
     end
 
@@ -21,6 +25,8 @@ module SpreeApfusion
       response = SpreeApfusion::OAuth.send(:PUT, '/api/v2/products/'+product.apfusion_product_id.to_s+'.json', {product: product_hash,filter_type: "id"})
       if response[:success] == true
         product.update_attributes(last_sync_to_apf_at: Time.current)
+      else
+        product.update_column('apfusion_response', response.to_s)
       end
       response
     end  
