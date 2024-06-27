@@ -2,7 +2,7 @@ module SpreeApfusion
   class Product
 
     def self.fetch ids
-      SpreeApfusion::OAuth.send(:get, "/api/v2/products.json", { ids: ids })
+      SpreeApfusion::OAuth.send(:get, "/api/v2/products.json", { ids: ids, per_page: 100 })
     end
 
     def self.create product
@@ -11,6 +11,10 @@ module SpreeApfusion
       if response[:success] == true && response[:response].present? && response[:response]["id"].present?                
         product.update_attributes(apfusion_product_id: response[:response]["id"], last_sync_to_apf_at: Time.current)
         product.master.update_attributes(apfusion_variant_id: response[:response]["master"]["id"])
+      elsif response[:success] == true && response[:response].present? && response[:response]["errors"].present?                
+        product.update_column('apfusion_response', response[:response]["errors"].to_s)
+      else
+        product.update_column('apfusion_response', response.to_s)
       end   
     end
 
@@ -21,6 +25,8 @@ module SpreeApfusion
       response = SpreeApfusion::OAuth.send(:PUT, '/api/v2/products/'+product.apfusion_product_id.to_s+'.json', {product: product_hash,filter_type: "id"})
       if response[:success] == true
         product.update_attributes(last_sync_to_apf_at: Time.current)
+      else
+        product.update_column('apfusion_response', response.to_s)
       end
       response
     end  
@@ -80,11 +86,13 @@ module SpreeApfusion
             next if rrw_element.nil?
 
             if product['name'] != rrw_element.name
-              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], 'NAME', rrw_element.name]
+              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], 'NAME', rrw_element.name]
             elsif product['master']['sku'] != rrw_element.sku
-              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], 'SKU', rrw_element.sku]
+              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], 'SKU', rrw_element.sku]
             elsif product['meta_description'] != rrw_element.meta_description
-              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], 'META_DESCRIPTION', rrw_element.meta_description]
+              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], 'META_DESCRIPTION', rrw_element.meta_description]
+            elsif product['total_on_hand'] != rrw_element.total_on_hand
+              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], 'STOCKS', rrw_element.total_on_hand]
             end
           end
         end
