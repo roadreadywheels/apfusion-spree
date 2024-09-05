@@ -85,14 +85,24 @@ module SpreeApfusion
             rrw_element = Spree::Product.find_by_apfusion_product_id(product['id'])
             next if rrw_element.nil?
 
-            if product['name'] != rrw_element.name
-              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], 'NAME', rrw_element.name, rrw_element.is_block_whole_sale?]
-            elsif product['master']['sku'] != rrw_element.sku
-              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], 'SKU', rrw_element.sku, rrw_element.is_block_whole_sale?]
-            elsif product['meta_description'] != rrw_element.meta_description
-              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], 'META_DESCRIPTION', rrw_element.meta_description, rrw_element.is_block_whole_sale?]
-            elsif product['total_on_hand'] != rrw_element.total_on_hand
-              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], 'STOCKS', rrw_element.total_on_hand, rrw_element.is_block_whole_sale?]
+            mismatched_info = if product['name'] != rrw_element.name
+                                ['NAME', rrw_element.name]
+                              elsif product['master']['sku'] != rrw_element.sku
+                                ['SKU', rrw_element.sku]
+                              elsif product['meta_description'] != rrw_element.meta_description
+                                ['META_DESCRIPTION', rrw_element.meta_description]
+                              elsif product['total_on_hand'] != rrw_element.total_on_hand
+                                ['STOCKS', rrw_element.total_on_hand]
+                              elsif product['price'].to_f != rrw_element.apf_price.to_f
+                                ['PRICE', rrw_element.apf_price.to_f]
+                              end
+
+            if mismatched_info.present?
+              row = [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], product['price']]
+              row = row + mismatched_info
+              row << rrw_element.is_block_whole_sale?
+
+              @unmatched_row << row
             end
           end
         end
