@@ -100,6 +100,7 @@ module SpreeApfusion
             if mismatched_info.present?
               row = [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], product['price']]
               row = row + mismatched_info
+              row << rrw_element.discontinue_on.to_s
               row << rrw_element.is_block_whole_sale?
 
               @unmatched_row << row
