@@ -57,6 +57,9 @@ module SpreeApfusion
       oe_number = product.oe_number.to_s
       @product_hash["oem_number"] = oe_number.gsub("|", ",") if oe_number != 'N/A'
 
+      hollander_number = product.hollander
+      @product_hash["hollander_number"] = hollander_number if hollander_number.present?
+
       @product_hash
     end
 
