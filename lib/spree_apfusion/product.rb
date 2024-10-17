@@ -57,8 +57,10 @@ module SpreeApfusion
       oe_number = product.oe_number.to_s
       @product_hash["oem_number"] = oe_number.gsub("|", ",") if oe_number != 'N/A'
 
-      hollander_number = product.hollander
-      @product_hash["hollander_number"] = hollander_number if hollander_number.present?
+      if ['560-71659-10', '560-71659-2', '104-0024-25', 'F550A-2', 'F550A-3', 'F550A-4', 'F550A-5', 'F550-3', 'F550A-7', 'F550A-6'].include?(product.sku)
+        hollander_number = product.hollander
+        @product_hash["hollander_number"] = hollander_number if hollander_number.present?
+      end
 
       @product_hash
     end
