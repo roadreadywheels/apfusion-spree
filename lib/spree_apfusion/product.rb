@@ -91,13 +91,13 @@ module SpreeApfusion
             next if rrw_element.nil?
 
             if product['name'] != rrw_element.name
-              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], 'NAME', rrw_element.name, rrw_element.is_block_whole_sale?]
+              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], rrw_element.apf_price, 'NAME', rrw_element.name, rrw_element.discontinue_on, rrw_element.is_block_whole_sale?]
             elsif product['master']['sku'] != rrw_element.sku
-              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], 'SKU', rrw_element.sku, rrw_element.is_block_whole_sale?]
+              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], rrw_element.apf_price, 'SKU', rrw_element.sku, rrw_element.discontinue_on, rrw_element.is_block_whole_sale?]
             elsif product['meta_description'] != rrw_element.meta_description
-              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], 'META_DESCRIPTION', rrw_element.meta_description, rrw_element.is_block_whole_sale?]
+              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], rrw_element.apf_price, 'META_DESCRIPTION', rrw_element.meta_description, rrw_element.discontinue_on, rrw_element.is_block_whole_sale?]
             elsif product['total_on_hand'] != rrw_element.total_on_hand
-              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], 'STOCKS', rrw_element.total_on_hand, rrw_element.is_block_whole_sale?]
+              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], rrw_element.apf_price, 'STOCKS', rrw_element.total_on_hand, rrw_element.discontinue_on, rrw_element.is_block_whole_sale?]
             end
           end
         end
