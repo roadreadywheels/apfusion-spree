@@ -34,7 +34,8 @@ module Spree
           'special_instructions' => (order['special_instructions'] || "APF: #{order['number']}"),
           'apfusion_order_id' => order['id'],
           'apfusion_completed_at' => order['completed_at'],
-          'user_id' => (@primary_user.try(:id) || order['rrw_user_id'])
+          'user_id' => (@primary_user.try(:id) || order['rrw_user_id']),
+          'source' => 'apfusion'
         }
         @order.update(orders_attributes)
         @order.set_methods(order, @primary_user)
@@ -129,6 +130,7 @@ module Spree
       address['country_id'] = country.present? ? country.id : address['country_id']
       address['state_id'] = country.present? ? country.states.find_by_name(address['state']['name']).id : address['state_id']
       address['phone'] = '888-790-5899' if !address['phone'].present?
+      address['source'] = 'apfusion'
       apfusion_delete_fields(address)
       return address
     end
@@ -149,6 +151,7 @@ module Spree
       address['country_id'] = bill_address_val.country_id
       address['state_id'] = bill_address_val.state_id
       address['phone'] = bill_address_val.phone
+      address['source'] = 'apfusion'
 
       apfusion_delete_fields(address)
       return address
@@ -192,6 +195,7 @@ module Spree
         function_where_issue_occurred: 'APFusion Sync Order issue',
         cc_email: nil,
         other: self.apfusion_exception_data(order, error),
+        apfusion_order: order,
         type: 'apfusion_orders_sync'
       }
       Spree::UserMailer.error_email(err_data).deliver!
