@@ -5,31 +5,45 @@ module SpreeApfusion
       SpreeApfusion::OAuth.send(:get, "/api/v2/products.json", { ids: ids, per_page: 100 })
     end
 
-    def self.create product
-      product_hash = SpreeApfusion::Product.generate_product_hash(product)
-      response = SpreeApfusion::OAuth.send(:post, '/api/v2/products.json', {product: product_hash})
-      if response[:success] == true && response[:response].present? && response[:response]["id"].present?                
-        product.update_attributes(apfusion_product_id: response[:response]["id"], last_sync_to_apf_at: Time.current)
-        product.master.update_attributes(apfusion_variant_id: response[:response]["master"]["id"])
-      elsif response[:success] == true && response[:response].present? && response[:response]["errors"].present?                
-        product.update_column('apfusion_response', response[:response]["errors"].to_s)
+    def self.store_apfusion_response(product, response)
+      if product.has_attribute?(:apfusion_response)
+        product.update_column(:apfusion_response, response.to_s)
       else
-        product.update_column('apfusion_response', response.to_s)
-      end   
+        product.public_metadata["apfusion"] ||= {}
+        product.public_metadata["apfusion"]["last_synced_at"] = Time.current
+        product.public_metadata["apfusion"]["response"] = response.to_s
+        product.save(validate: false)
+      end
     end
 
-    def self.update product
+    def self.create(product)
+      product_hash = SpreeApfusion::Product.generate_product_hash(product)
+      response = SpreeApfusion::OAuth.send(:post, '/api/v2/products.json', { product: product_hash })
+
+      if response[:success] == true && response[:response].present? && response[:response]["id"].present?
+        product.update(apfusion_product_id: response[:response]["id"])
+        product.master.update(apfusion_variant_id: response[:response]["master"]["id"])
+      elsif response[:success] == true && response[:response].present? && response[:response]["errors"].present?
+        store_apfusion_response(product, response[:response]["errors"])
+      else
+        store_apfusion_response(product, response)
+      end
+    end
+
+    def self.update(product)
       return if product.blank?
 
       product_hash = SpreeApfusion::Product.generate_product_hash(product)
-      response = SpreeApfusion::OAuth.send(:PUT, '/api/v2/products/'+product.apfusion_product_id.to_s+'.json', {product: product_hash,filter_type: "id"})
+      response = SpreeApfusion::OAuth.send(:put, "/api/v2/products/#{product.apfusion_product_id}.json", { product: product_hash, filter_type: "id" })
+
       if response[:success] == true
-        product.update_attributes(last_sync_to_apf_at: Time.current)
+        store_apfusion_response(product, "")
       else
-        product.update_column('apfusion_response', response.to_s)
+        store_apfusion_response(product, response)
       end
+
       response
-    end  
+    end
 
     def self.destroy product
       return if product.blank?
@@ -90,14 +104,18 @@ module SpreeApfusion
             rrw_element = Spree::Product.find_by_apfusion_product_id(product['id'])
             next if rrw_element.nil?
 
+            rrw_apf_price = rrw_element.apf_price
+
             if product['name'] != rrw_element.name
-              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], rrw_element.apf_price, 'NAME', rrw_element.name, rrw_element.discontinue_on, rrw_element.is_block_whole_sale?]
+              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], product['price'], 'NAME', rrw_element.name, rrw_element.discontinue_on, rrw_element.is_block_whole_sale?]
             elsif product['master']['sku'] != rrw_element.sku
-              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], rrw_element.apf_price, 'SKU', rrw_element.sku, rrw_element.discontinue_on, rrw_element.is_block_whole_sale?]
+              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], product['price'], 'SKU', rrw_element.sku, rrw_element.discontinue_on, rrw_element.is_block_whole_sale?]
             elsif product['meta_description'] != rrw_element.meta_description
-              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], rrw_element.apf_price, 'META_DESCRIPTION', rrw_element.meta_description, rrw_element.discontinue_on, rrw_element.is_block_whole_sale?]
+              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], product['price'], 'META_DESCRIPTION', rrw_element.meta_description, rrw_element.discontinue_on, rrw_element.is_block_whole_sale?]
             elsif product['total_on_hand'] != rrw_element.total_on_hand
-              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], rrw_element.apf_price, 'STOCKS', rrw_element.total_on_hand, rrw_element.discontinue_on, rrw_element.is_block_whole_sale?]
+              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], product['price'], 'STOCKS', rrw_element.total_on_hand, rrw_element.discontinue_on, rrw_element.is_block_whole_sale?]
+            elsif product['price'].to_f != rrw_apf_price
+              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], product['price'], 'PRICE', rrw_apf_price, rrw_element.discontinue_on, rrw_element.is_block_whole_sale?]
             end
           end
         end
