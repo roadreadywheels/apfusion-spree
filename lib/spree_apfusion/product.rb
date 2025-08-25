@@ -5,31 +5,45 @@ module SpreeApfusion
       SpreeApfusion::OAuth.send(:get, "/api/v2/products.json", { ids: ids, per_page: 100 })
     end
 
-    def self.create product
-      product_hash = SpreeApfusion::Product.generate_product_hash(product)
-      response = SpreeApfusion::OAuth.send(:post, '/api/v2/products.json', {product: product_hash})
-      if response[:success] == true && response[:response].present? && response[:response]["id"].present?                
-        product.update_attributes(apfusion_product_id: response[:response]["id"], last_sync_to_apf_at: Time.current)
-        product.master.update_attributes(apfusion_variant_id: response[:response]["master"]["id"])
-      elsif response[:success] == true && response[:response].present? && response[:response]["errors"].present?                
-        product.update_column('apfusion_response', response[:response]["errors"].to_s)
+    def self.store_apfusion_response(product, response)
+      if product.has_attribute?(:apfusion_response)
+        product.update_column(:apfusion_response, response.to_s)
       else
-        product.update_column('apfusion_response', response.to_s)
-      end   
+        product.public_metadata["apfusion"] ||= {}
+        product.public_metadata["apfusion"]["last_synced_at"] = Time.current
+        product.public_metadata["apfusion"]["response"] = response.to_s
+        product.save(validate: false)
+      end
     end
 
-    def self.update product
+    def self.create(product)
+      product_hash = SpreeApfusion::Product.generate_product_hash(product)
+      response = SpreeApfusion::OAuth.send(:post, '/api/v2/products.json', { product: product_hash })
+
+      if response[:success] == true && response[:response].present? && response[:response]["id"].present?
+        product.update(apfusion_product_id: response[:response]["id"])
+        product.master.update(apfusion_variant_id: response[:response]["master"]["id"])
+      elsif response[:success] == true && response[:response].present? && response[:response]["errors"].present?
+        store_apfusion_response(product, response[:response]["errors"])
+      else
+        store_apfusion_response(product, response)
+      end
+    end
+
+    def self.update(product)
       return if product.blank?
 
       product_hash = SpreeApfusion::Product.generate_product_hash(product)
-      response = SpreeApfusion::OAuth.send(:PUT, '/api/v2/products/'+product.apfusion_product_id.to_s+'.json', {product: product_hash,filter_type: "id"})
+      response = SpreeApfusion::OAuth.send(:put, "/api/v2/products/#{product.apfusion_product_id}.json", { product: product_hash, filter_type: "id" })
+
       if response[:success] == true
-        product.update_attributes(last_sync_to_apf_at: Time.current)
+        store_apfusion_response(product, "")
       else
-        product.update_column('apfusion_response', response.to_s)
+        store_apfusion_response(product, response)
       end
+
       response
-    end  
+    end
 
     def self.destroy product
       return if product.blank?

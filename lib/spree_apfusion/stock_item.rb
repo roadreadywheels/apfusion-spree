@@ -14,7 +14,7 @@ module SpreeApfusion
         if response[:response].is_a?(Hash) && response[:response]["id"].present?                
            @stock_item.update_attributes(apfusion_stock_item_id: response[:response]["id"])
         elsif response[:response].is_a?(Hash) && response[:response]["errors"].present?
-          @stock_item.update_column('apfusion_response', response[:response]["errors"])
+          store_apfusion_response(@stock_item, response[:response]["errors"])
         elsif response[:response].is_a?(Array)
           @stock_item.update_attributes(apfusion_stock_item_id: response[:response][0]["id"])
         end
@@ -32,18 +32,28 @@ module SpreeApfusion
         @stock_item.update_column('apfusion_response', response)
       elsif response[:success] == true
         if response[:response].present? && response[:response]["errors"].present?
-          @stock_item.update_column('apfusion_response', response[:response]["errors"].to_s)
+          store_apfusion_response(@stock_item, response[:response]["errors"].to_s)
         else
           @stock_item.product.update_attributes(last_sync_to_apf_at: Time.current)
-          @stock_item.update_column('apfusion_response', nil)
+          store_apfusion_response(@stock_item, nil)
         end
       else
-        @stock_item.update_column('apfusion_response', response.to_s)
+        store_apfusion_response(@stock_item, response.to_s)
       end
 
       response
     end
 
+    def self.store_apfusion_response(stock_item, response)
+      if stock_item.has_attribute?(:apfusion_response)
+        stock_item.update_column(:apfusion_response, response.to_s)
+      else
+        stock_item.public_metadata["apfusion"] ||= {}
+        stock_item.public_metadata["apfusion"]["last_synced_at"] = Time.current
+        stock_item.public_metadata["apfusion"]["response"] = response.to_s
+        stock_item.save(validate: false)
+      end
+    end
 
     def self.destroy stock_item
       @stock_item = stock_item
