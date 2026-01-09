@@ -109,7 +109,11 @@ module Spree
       variant = line_item['variant']['is_master'] ?
                 Spree::Product.find_by_apfusion_product_id(line_item['source_id'])&.master :
                 Spree::Variant.find_by_apfusion_variant_id(line_item['source_id'])
-      self.contents.add(variant, quantity, shipment_condition, (line_item['price'] || 0)) if variant.present?
+      if variant.present?
+        self.contents.add(variant, quantity, shipment_condition, (line_item['price'] || 0))
+      else
+        self.update_column("partial", true)
+      end
     end
 
     def apfusion_create_shipments shipment
