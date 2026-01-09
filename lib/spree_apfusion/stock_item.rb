@@ -60,7 +60,7 @@ module SpreeApfusion
       @stock_item_hash["force"] = true
       @stock_item_hash["sku"] = @stock_item.variant.sku
       product = @stock_item.variant.product
-      if product.block_whole_sale.eql?(1)
+      if product.is_block_whole_sale?
         @stock_item_hash["block_whole_sale"] = true
       end
       if product.discontinued?

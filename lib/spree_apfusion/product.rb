@@ -90,14 +90,18 @@ module SpreeApfusion
             rrw_element = Spree::Product.find_by_apfusion_product_id(product['id'])
             next if rrw_element.nil?
 
+            rrw_apf_price = rrw_element.apf_price
+
             if product['name'] != rrw_element.name
-              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], rrw_element.apf_price, 'NAME', rrw_element.name, rrw_element.discontinue_on, rrw_element.is_block_whole_sale?]
+              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], product['price'], 'NAME', rrw_element.name, rrw_element.discontinue_on, rrw_element.is_block_whole_sale?]
             elsif product['master']['sku'] != rrw_element.sku
-              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], rrw_element.apf_price, 'SKU', rrw_element.sku, rrw_element.discontinue_on, rrw_element.is_block_whole_sale?]
+              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], product['price'], 'SKU', rrw_element.sku, rrw_element.discontinue_on, rrw_element.is_block_whole_sale?]
             elsif product['meta_description'] != rrw_element.meta_description
-              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], rrw_element.apf_price, 'META_DESCRIPTION', rrw_element.meta_description, rrw_element.discontinue_on, rrw_element.is_block_whole_sale?]
+              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], product['price'], 'META_DESCRIPTION', rrw_element.meta_description, rrw_element.discontinue_on, rrw_element.is_block_whole_sale?]
             elsif product['total_on_hand'] != rrw_element.total_on_hand
-              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], rrw_element.apf_price, 'STOCKS', rrw_element.total_on_hand, rrw_element.discontinue_on, rrw_element.is_block_whole_sale?]
+              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], product['price'], 'STOCKS', rrw_element.total_on_hand, rrw_element.discontinue_on, rrw_element.is_block_whole_sale?]
+            elsif product['price'].to_f != rrw_apf_price
+              @unmatched_row << [product['name'], product['master']['sku'], product['meta_description'], product['total_on_hand'], product['price'], 'PRICE', rrw_apf_price, rrw_element.discontinue_on, rrw_element.is_block_whole_sale?]
             end
           end
         end
