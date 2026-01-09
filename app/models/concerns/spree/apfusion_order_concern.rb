@@ -57,6 +57,9 @@ module Spree
     def reload_totals
       update_totals
       persist_totals
+      if self.line_items.count == 0
+        raise "Ordered products do not exist in the system."
+      end
       self.next
       self.next
     end
@@ -104,9 +107,9 @@ module Spree
 
     def set_line_item line_item:, shipment_condition: {}, quantity:
       variant = line_item['variant']['is_master'] ?
-                Spree::Product.find_by_apfusion_product_id(line_item['source_id']).master :
+                Spree::Product.find_by_apfusion_product_id(line_item['source_id'])&.master :
                 Spree::Variant.find_by_apfusion_variant_id(line_item['source_id'])
-      self.contents.add(variant, quantity, shipment_condition, (line_item['price'] || 0))
+      self.contents.add(variant, quantity, shipment_condition, (line_item['price'] || 0)) if variant.present?
     end
 
     def apfusion_create_shipments shipment
