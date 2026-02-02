@@ -2,7 +2,7 @@ module SpreeApfusion
   class OAuth
 
     def self.init
-      record = SpreeApfusion::OAuth.apfusion_token_record
+      record = ::SpreeApfusion::OAuth.apfusion_token_record
       @url = record.get_scope
       @access_token = record.get_token if record.present?
     end
@@ -10,9 +10,9 @@ module SpreeApfusion
     def self.get_access_token
       self.initialize_config_elements
       begin
-        request = RestClient.post("#{@url}/oauth/token", {client_id: @public_key, client_secret: @secret_key, grant_type: self.grant_type})
+        request = ::RestClient.post("#{@url}/oauth/token", {client_id: @public_key, client_secret: @secret_key, grant_type: self.grant_type})
         @access_token = JSON.parse(request.body)['access_token']
-        SpreeApfusion::OAuth.update_token
+        ::SpreeApfusion::OAuth.update_token
         return {success: true}
       rescue => e
         error = e.as_json
@@ -29,10 +29,10 @@ module SpreeApfusion
     end
 
     def self.authorize
-      SpreeApfusion::OAuth.init
+      ::SpreeApfusion::OAuth.init
 
       if @access_token.blank?
-        response = SpreeApfusion::OAuth.get_access_token
+        response = ::SpreeApfusion::OAuth.get_access_token
         unless response[:success]
           return response
         end
@@ -47,7 +47,7 @@ module SpreeApfusion
       p "Url: #{url_path}"
       p "Params: #{data}"
       p '========================'
-      SpreeApfusion::OAuth.authorize
+      ::SpreeApfusion::OAuth.authorize
       p 'after authorize called'
       request = self.client(url_path: url_path, method: method, data: data)
 
@@ -61,8 +61,8 @@ module SpreeApfusion
           return self.get_response(success: true, response_body: response_body, code: response.code)
         when '401'
           p '!!!!Invalid Access Token!!!!'
-          ApfusionToken.destroy_all
-          SpreeApfusion::OAuth.send(method, url_path, data)
+          ::ApfusionToken.destroy_all
+          ::SpreeApfusion::OAuth.send(method, url_path, data)
         else
           return self.get_response(success: false, response_body: response_body, code: response.code)
         end
@@ -80,7 +80,7 @@ module SpreeApfusion
     end
 
     def self.client url_path:, method:, data:
-      RestClient::Request.new(
+      ::RestClient::Request.new(
         method: method,
         url: "#{@url}#{url_path}?access_token=#{@access_token}",
         headers: { params: data }
@@ -88,7 +88,7 @@ module SpreeApfusion
     end
 
     def self.apfusion_token_record
-      ApfusionToken.first_or_create
+      ::ApfusionToken.first_or_create
     end
 
     def self.grant_type
