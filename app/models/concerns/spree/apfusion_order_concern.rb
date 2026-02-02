@@ -205,7 +205,7 @@ module Spree
         apfusion_order: order,
         type: 'apfusion_orders_sync'
       }
-      Spree::UserMailer.error_email(err_data).deliver!
+      ::Spree::ManagementMailer.error_email(err_data).deliver!
     end
 
     def self.initialize_values

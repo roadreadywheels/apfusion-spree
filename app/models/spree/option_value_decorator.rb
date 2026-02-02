@@ -1,19 +1,17 @@
-Spree::OptionValue.class_eval do
-	# after_create :create_at_apfusion
-	# after_update :update_at_apfusion
-	# after_destroy :destroy_at_apfusion
+module Spree
+  module OptionValueDecorator
+    def create_at_apfusion
+      SpreeApfusion::OptionValue.create(self)
+    end
 
-	
-	def create_at_apfusion
-		SpreeApfusion::OptionValue.create(self)
-	end
+    def update_at_apfusion
+      SpreeApfusion::OptionValue.update(self)
+    end
 
-	def update_at_apfusion
-		SpreeApfusion::OptionValue.update(self)
-	end
+    def destroy_at_apfusion
+      SpreeApfusion::OptionValue.destroy(self)
+    end
+  end
 
-	def destroy_at_apfusion
-		SpreeApfusion::OptionValue.destroy(self)
-	end
-
+  OptionValue.prepend(OptionValueDecorator)
 end

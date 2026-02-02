@@ -21,14 +21,9 @@ module SpreeApfusion
       SpreeApfusion::StockLocation.generate_stock_location_hash
       SpreeApfusion::OAuth.send(:DELETE , '/api/v2/stock_locations/'+@stock_location.apfusion_stock_location_id.to_s+'.json', {stock_location: @stock_location_hash})
     end
-      
-  
 
     def self.generate_stock_location_hash 
       @stock_location_hash = @stock_location.attributes
     end
-
-
-
   end
 end
