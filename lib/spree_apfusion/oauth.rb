@@ -25,7 +25,7 @@ module SpreeApfusion
     end
 
     def self.update_token
-      ApfusionToken.first_or_create.update_attributes(scope: @url, token: @access_token)
+      ApfusionToken.first_or_create.update(scope: @url, token: @access_token)
     end
 
     def self.authorize
