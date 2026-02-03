@@ -62,6 +62,7 @@ module Spree
       end
       self.next
       self.next
+      self.update_columns(shipment_state: "ready")
     end
 
     def apfusion_update_addresses order, primary_user
