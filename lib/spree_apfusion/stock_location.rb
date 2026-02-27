@@ -5,7 +5,7 @@ module SpreeApfusion
       @stock_location = stock_location
       SpreeApfusion::StockLocation.generate_stock_location_hash 
       response = SpreeApfusion::OAuth.send(:post, '/api/v2/stock_locations.json', {stock_location: @stock_location_hash})[:response]  
-      @stock_location.update_attributes(apfusion_stock_location_id: response["id"])
+      @stock_location.update_columns(apfusion_stock_location_id: response["id"])
     end
 
     def self.update stock_location

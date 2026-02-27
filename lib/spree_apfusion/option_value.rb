@@ -7,7 +7,7 @@ module SpreeApfusion
       SpreeApfusion::OptionValue.generate_option_value_hash 
       response = SpreeApfusion::OAuth.send(:post, '/api/v2/option_values.json', {option_value: @option_value_hash})
       if response[:success] == true                 
-        @option_value.update_attributes(apfusion_option_value_id: response[:response]["id"])
+        @option_value.update_columns(apfusion_option_value_id: response[:response]["id"])
       end  
     end
 

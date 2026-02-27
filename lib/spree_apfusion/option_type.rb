@@ -6,7 +6,7 @@ module SpreeApfusion
       SpreeApfusion::OptionType.generate_option_type_hash 
       response = SpreeApfusion::OAuth.send(:post, '/api/v2/option_types.json', {option_type: @option_type_hash})
       if response[:success] == true                 
-        @option_type.update_attributes(apfusion_option_type_id: response[:response]["id"])
+        @option_type.update_columns(apfusion_option_type_id: response[:response]["id"])
       end   
 
     end

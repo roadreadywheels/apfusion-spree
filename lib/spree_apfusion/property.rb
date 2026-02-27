@@ -5,7 +5,7 @@ module SpreeApfusion
       @property = property
       SpreeApfusion::Property.generate_property_hash 
       response = SpreeApfusion::OAuth.send(:post, '/api/v2/properties.json', {property: @property_hash})[:response]
-      @property.update_attributes(apfusion_property_id: response["id"])
+      @property.update_columns(apfusion_property_id: response["id"])
     end
 
     def self.update property
