@@ -7,7 +7,7 @@ module SpreeApfusion
       SpreeApfusion::Variant.generate_variant_hash 
       response = SpreeApfusion::OAuth.send(:post, '/api/v2/products/'+@variant.product.apfusion_product_id.to_s+'/variants.json', {variant: @variant_hash})
       if response[:success] == true                 
-        @variant.update_attributes(apfusion_variant_id: response[:response]["id"])
+        @variant.update_columns(apfusion_variant_id: response[:response]["id"])
       end
     end
 

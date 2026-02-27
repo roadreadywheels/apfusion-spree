@@ -1,10 +1,9 @@
-Spree::StockMovement.class_eval do
-	  # after_create :create_at_apfusion
+module Spree
+  module StockMovementDecorator
+    def create_at_apfusion
+      SpreeApfusion::StockMovement.create(self)
+    end
+  end
 
-	def create_at_apfusion
-		SpreeApfusion::StockMovement.create(self)
-	end
-
-	
-
+  StockMovement.prepend(StockMovementDecorator)
 end

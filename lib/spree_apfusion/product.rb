@@ -9,8 +9,8 @@ module SpreeApfusion
       product_hash = SpreeApfusion::Product.generate_product_hash(product)
       response = SpreeApfusion::OAuth.send(:post, '/api/v2/products.json', {product: product_hash})
       if response[:success] == true && response[:response].present? && response[:response]["id"].present?                
-        product.update_attributes(apfusion_product_id: response[:response]["id"], last_sync_to_apf_at: Time.current)
-        product.master.update_attributes(apfusion_variant_id: response[:response]["master"]["id"])
+        product.update_columns(apfusion_product_id: response[:response]["id"], last_sync_to_apf_at: Time.current)
+        product.master.update_columns(apfusion_variant_id: response[:response]["master"]["id"])
       elsif response[:success] == true && response[:response].present? && response[:response]["errors"].present?                
         product.update_column('apfusion_response', response[:response]["errors"].to_s)
       else
@@ -24,7 +24,7 @@ module SpreeApfusion
       product_hash = SpreeApfusion::Product.generate_product_hash(product)
       response = SpreeApfusion::OAuth.send(:PUT, '/api/v2/products/'+product.apfusion_product_id.to_s+'.json', {product: product_hash,filter_type: "id"})
       if response[:success] == true
-        product.update_attributes(last_sync_to_apf_at: Time.current)
+        product.update_columns(last_sync_to_apf_at: Time.current)
       else
         product.update_column('apfusion_response', response.to_s)
       end

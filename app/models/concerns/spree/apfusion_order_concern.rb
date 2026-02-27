@@ -62,6 +62,7 @@ module Spree
       end
       self.next
       self.next
+      self.update_columns(shipment_state: "ready")
     end
 
     def apfusion_update_addresses order, primary_user
@@ -205,7 +206,7 @@ module Spree
         apfusion_order: order,
         type: 'apfusion_orders_sync'
       }
-      Spree::UserMailer.error_email(err_data).deliver!
+      ::Spree::ManagementMailer.error_email(err_data).deliver!
     end
 
     def self.initialize_values

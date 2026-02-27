@@ -6,7 +6,7 @@ module SpreeApfusion
       @product_properties
       SpreeApfusion::ProductProperty.generate_product_properties_hash 
       response = SpreeApfusion::OAuth.send(:post, '/api/v2/products/'+@product_properties.product.apfusion_product_id.to_s+'/product_properties.json', {product_property: @product_properties_hash,filter_type: "id"})[:response] 
-      @product_properties.update_attributes(apfusion_product_property_id: response["id"]) 
+      @product_properties.update_columns(apfusion_product_property_id: response["id"]) 
     end
 
     def self.update product_properties
