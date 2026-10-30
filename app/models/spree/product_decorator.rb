@@ -120,7 +120,7 @@ module Spree
 	  def apf_price
 	    return apfusion_amount if apfusion_amount.to_i > 0
 	    return calculate_price(resale_amount) if resale_amount.to_i > 0
-	    calculate_price(price)
+	    calculate_price(price.to_f)
 	  end
 
 	  # formula changes for BSAP/Baabs/Part Synergy Customers on 14-sept-22

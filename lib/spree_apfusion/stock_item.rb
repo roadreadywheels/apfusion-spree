@@ -19,6 +19,8 @@ module SpreeApfusion
           @stock_item.update_columns(apfusion_stock_item_id: response[:response][0]["id"])
         end
       end
+    rescue Exception => e
+      @stock_item.update_column('apfusion_response', e.message)
     end
 
     def self.update stock_item
