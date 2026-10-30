@@ -42,7 +42,6 @@ module Spree
         return @order
       rescue Exception => e
         self.send_exception(e, order)
-        e.message
       end
     end
 
@@ -207,6 +206,8 @@ module Spree
         type: 'apfusion_orders_sync'
       }
       ::Spree::ManagementMailer.error_email(err_data).deliver!
+
+      err_data
     end
 
     def self.initialize_values
